@@ -1,4 +1,4 @@
-import type { MascotaReportada } from '../core/types/mascota';
+import type { MascotaReportada } from '../types/mascota';
 
 export const MOCK_MASCOTAS: MascotaReportada[] = [
   {

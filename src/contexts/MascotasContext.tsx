@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import type { MascotaReportada, BarrioBahia, EstadoMascota, TipoAnimal } from '../../core/types/mascota';
-import { mockService } from '../../data/mockService';
+import React, { createContext, useState, useEffect, useMemo, useCallback } from 'react';
+import type { MascotaReportada, BarrioBahia, EstadoMascota, TipoAnimal } from '../types/mascota';
+import { mockService } from '../services/mockService';
 
 export interface FiltrosMascotas {
   barrio: BarrioBahia | 'todos';
@@ -9,6 +9,21 @@ export interface FiltrosMascotas {
   busqueda: string;
 }
 
+export interface MascotasContextType {
+  mascotas: MascotaReportada[];
+  rawMascotas: MascotaReportada[];
+  loading: boolean;
+  error: string | null;
+  isSaving: boolean;
+  filtros: FiltrosMascotas;
+  setFiltro: <K extends keyof FiltrosMascotas>(key: K, value: FiltrosMascotas[K]) => void;
+  resetearFiltros: () => void;
+  agregarReporte: (nuevoReporte: Omit<MascotaReportada, 'id' | 'fecha'>) => Promise<MascotaReportada | null>;
+  recargarMascotas: () => Promise<void>;
+}
+
+export const MascotasContext = createContext<MascotasContextType | undefined>(undefined);
+
 const cleanText = (text: string): string => {
   return text
     .toLowerCase()
@@ -16,13 +31,12 @@ const cleanText = (text: string): string => {
     .replace(/[\u0300-\u036f]/g, '');
 };
 
-export const useMascotas = () => {
+export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mascotas, setMascotas] = useState<MascotaReportada[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  // Estado de los filtros
   const [filtros, setFiltros] = useState<FiltrosMascotas>({
     barrio: 'todos',
     estado: 'todos',
@@ -30,7 +44,6 @@ export const useMascotas = () => {
     busqueda: ''
   });
 
-  // Cargar datos al montar el componente
   const cargarMascotas = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -48,19 +61,12 @@ export const useMascotas = () => {
     cargarMascotas();
   }, [cargarMascotas]);
 
-  // Aplicar filtros de forma eficiente usando useMemo
   const mascotasFiltradas = useMemo(() => {
     return mascotas.filter(mascota => {
-      // Filtrar por Barrio
       const coincideBarrio = filtros.barrio === 'todos' || mascota.barrio === filtros.barrio;
-      
-      // Filtrar por Estado (perdido/encontrado)
       const coincideEstado = filtros.estado === 'todos' || mascota.estado === filtros.estado;
-      
-      // Filtrar por Tipo de Animal
       const coincideTipo = filtros.tipo === 'todos' || mascota.tipo === filtros.tipo;
       
-      // Filtrar por búsqueda textual (búsqueda insensible a mayúsculas y acentos)
       const busquedaClean = cleanText(filtros.busqueda.trim());
       const coincideBusqueda = 
         busquedaClean === '' ||
@@ -73,8 +79,6 @@ export const useMascotas = () => {
     });
   }, [mascotas, filtros]);
 
-
-  // Actualizar un filtro individual
   const setFiltro = useCallback(<K extends keyof FiltrosMascotas>(key: K, value: FiltrosMascotas[K]) => {
     setFiltros(prev => ({
       ...prev,
@@ -82,7 +86,6 @@ export const useMascotas = () => {
     }));
   }, []);
 
-  // Limpiar todos los filtros
   const resetearFiltros = useCallback(() => {
     setFiltros({
       barrio: 'todos',
@@ -92,7 +95,6 @@ export const useMascotas = () => {
     });
   }, []);
 
-  // Agregar nuevo reporte de mascota
   const agregarReporte = useCallback(async (
     nuevoReporte: Omit<MascotaReportada, 'id' | 'fecha'>
   ): Promise<MascotaReportada | null> => {
@@ -100,7 +102,6 @@ export const useMascotas = () => {
     setError(null);
     try {
       const mascotaCreada = await mockService.addMascota(nuevoReporte);
-      // Actualizar el estado local agregándola al principio
       setMascotas(prev => [mascotaCreada, ...prev]);
       return mascotaCreada;
     } catch (err) {
@@ -111,9 +112,9 @@ export const useMascotas = () => {
     }
   }, []);
 
-  return {
-    mascotas: mascotasFiltradas, // Devolvemos la lista ya filtrada
-    rawMascotas: mascotas, // Lista completa sin filtros por si se requiere
+  const value = useMemo(() => ({
+    mascotas: mascotasFiltradas,
+    rawMascotas: mascotas,
     loading,
     error,
     isSaving,
@@ -122,5 +123,11 @@ export const useMascotas = () => {
     resetearFiltros,
     agregarReporte,
     recargarMascotas: cargarMascotas
-  };
+  }), [mascotasFiltradas, mascotas, loading, error, isSaving, filtros, setFiltro, resetearFiltros, agregarReporte, cargarMascotas]);
+
+  return (
+    <MascotasContext.Provider value={value}>
+      {children}
+    </MascotasContext.Provider>
+  );
 };

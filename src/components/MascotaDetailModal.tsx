@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle, Shield } from 'lucide-react';
-import type { MascotaReportada } from '../../core/types/mascota';
+import type { MascotaReportada } from '../types/mascota';
 
 interface MascotaDetailModalProps {
   mascota: MascotaReportada | null;
@@ -70,7 +70,7 @@ export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota,
   return (
     <div 
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 dark:bg-black/60 backdrop-blur-md transition-all duration-300 animate-fade-in overflow-y-auto cursor-pointer"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-955/40 dark:bg-black/60 backdrop-blur-md transition-all duration-300 animate-fade-in overflow-y-auto cursor-pointer"
     >
       {/* Tarjeta con Efecto Glassmorphism Avanzado */}
       <div 
@@ -160,9 +160,9 @@ export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota,
             </div>
           )}
 
-          {/* Datos del Reportante (Ajustado para alto contraste en Dark Mode) */}
+          {/* Datos del Reportante */}
           <div className="flex items-center gap-3.5 p-4 bg-white/70 dark:bg-slate-800/40 rounded-2xl border border-white/30 dark:border-slate-800/40 shadow-sm transition-colors">
-            <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-sm border border-slate-250 dark:border-slate-700 flex-shrink-0">
+            <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-sm border border-slate-200 dark:border-slate-700 flex-shrink-0">
               {nombreContacto.charAt(0).toUpperCase()}
             </div>
             <div>

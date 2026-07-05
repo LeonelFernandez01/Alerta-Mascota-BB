@@ -10,7 +10,7 @@ import { FilterBar } from '../components/FilterBar';
 import { MascotaCard } from '../components/MascotaCard';
 import { ReportModal } from '../components/ReportModal';
 import { MascotaDetailModal } from '../components/MascotaDetailModal';
-import type { MascotaReportada } from '../../core/types/mascota';
+import type { MascotaReportada } from '../types/mascota';
 
 type TabId = 'feed' | 'recursos' | 'info';
 
@@ -252,7 +252,7 @@ export const FeedPage: React.FC = () => {
                 <div className="py-12 px-6 bg-rose-50 dark:bg-rose-950/10 border border-rose-100 dark:border-rose-900/20 rounded-3xl text-center space-y-4 max-w-md mx-auto">
                   <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto animate-pulse" />
                   <div>
-                    <h3 className="font-bold text-rose-900 dark:text-rose-450 text-sm">Problema al sincronizar reportes</h3>
+                    <h3 className="font-bold text-rose-900 dark:text-rose-455 text-sm">Problema al sincronizar reportes</h3>
                     <p className="text-xs text-rose-600 dark:text-rose-400 mt-1">{error}</p>
                   </div>
                   <button
@@ -274,7 +274,7 @@ export const FeedPage: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">No hay resultados</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    <p className="text-xs text-slate-505 dark:text-slate-400 mt-1 leading-relaxed">
                       No encontramos alertas que coincidan con los filtros seleccionados. Intenta ampliar tu búsqueda o cambiar de barrio.
                     </p>
                   </div>
@@ -292,7 +292,6 @@ export const FeedPage: React.FC = () => {
                     ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" 
                     : "flex flex-col gap-3.5 max-w-4xl mx-auto w-full"
                   }>
-
                     {mascotasVisibles.map((mascota) => (
                       <MascotaCard 
                         key={mascota.id} 
@@ -324,7 +323,7 @@ export const FeedPage: React.FC = () => {
           <main className="w-full max-w-3xl mx-auto px-4 py-8 pb-28 md:pb-12 space-y-6">
             <div>
               <h2 className="font-extrabold text-slate-900 dark:text-white text-xl tracking-tight">Zoonosis y Refugios Locales</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Contactos útiles y servicios públicos de emergencia para mascotas en Bahía Blanca y cercanías.</p>
+              <p className="text-xs text-slate-505 dark:text-slate-400 mt-1">Contactos útiles y servicios públicos de emergencia para mascotas en Bahía Blanca y cercanías.</p>
             </div>
 
             <div className="space-y-4">
@@ -436,7 +435,7 @@ export const FeedPage: React.FC = () => {
         <button
           onClick={() => setActiveTab('feed')}
           className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-            activeTab === 'feed' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
+            activeTab === 'feed' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
         >
           <Home className="w-5 h-5" />
@@ -456,7 +455,7 @@ export const FeedPage: React.FC = () => {
         <button
           onClick={() => setActiveTab('recursos')}
           className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-            activeTab === 'recursos' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
+            activeTab === 'recursos' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
         >
           <HeartHandshake className="w-5 h-5" />
@@ -467,7 +466,7 @@ export const FeedPage: React.FC = () => {
         <button
           onClick={() => setActiveTab('info')}
           className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-            activeTab === 'info' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
+            activeTab === 'info' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
         >
           <HelpCircle className="w-5 h-5" />

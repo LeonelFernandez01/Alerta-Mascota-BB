@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Dog, Cat, HelpCircle, FileText, MapPin, Phone, User, Image, PlusCircle, AlertTriangle } from 'lucide-react';
-import type { BarrioBahia, EstadoMascota, TipoAnimal, MascotaReportada } from '../../core/types/mascota';
+import type { BarrioBahia, EstadoMascota, TipoAnimal, MascotaReportada } from '../types/mascota';
 
 interface ReportModalProps {
   isOpen: boolean;
@@ -166,7 +166,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-350 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-355 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -198,7 +198,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
                       className={`flex-1 py-2 rounded-xl text-xs font-semibold flex flex-col items-center justify-center gap-1 transition-all capitalize cursor-pointer ${
                         isSel
                           ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-700/50 font-bold'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                          : 'text-slate-505 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                       }`}
                     >
                       {animal === 'perro' && <Dog className="w-3.5 h-3.5" />}
@@ -229,10 +229,10 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
                       type="button"
                       onClick={() => setEstado(est)}
                       className={`flex-1 py-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition-all capitalize cursor-pointer ${
-                        isSel ? selectedStyles : 'text-slate-505 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                        isSel ? selectedStyles : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                       }`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full ${est === 'perdido' ? 'bg-rose-505' : 'bg-emerald-555'}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full ${est === 'perdido' ? 'bg-rose-500' : 'bg-emerald-500'}`} />
                       {est}
                     </button>
                   );
@@ -286,7 +286,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
             <div className="space-y-3">
               {fotoBase64 ? (
                 /* Previsualización del archivo cargado */
-                <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-55 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 flex items-center justify-center">
+                <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 flex items-center justify-center">
                   <img src={fotoBase64} alt="Previsualización" className="w-full h-full object-cover" />
                   <button
                     type="button"

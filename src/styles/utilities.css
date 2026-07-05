@@ -1,0 +1,12 @@
+@utility scrollbar-none {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@utility mask-edges {
+  mask-image: linear-gradient(to right, transparent, white 16px, white calc(100% - 16px), transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, white 16px, white calc(100% - 16px), transparent);
+}

@@ -1,4 +1,4 @@
-import type { MascotaReportada } from '../core/types/mascota';
+import type { MascotaReportada } from '../types/mascota';
 import { MOCK_MASCOTAS } from './mockMascotas';
 
 // Clave para guardar y cargar los datos de prueba en localStorage,
@@ -40,7 +40,7 @@ export const mockService = {
     
     const mascotaCreada: MascotaReportada = {
       ...nueva,
-      id: Math.random().toString(36).substr(2, 9), // ID único aleatorio
+      id: Math.random().toString(36).substring(2, 9), // ID único aleatorio
       fecha: new Date().toISOString()
     };
 

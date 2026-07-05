@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle } from 'lucide-react';
-import type { MascotaReportada } from '../../core/types/mascota';
+import type { MascotaReportada } from '../types/mascota';
 
 interface MascotaCardProps {
   mascota: MascotaReportada;
@@ -100,7 +100,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
           <div className="flex items-center gap-1.5 mt-0.5 mb-1 flex-wrap">
             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-bold tracking-wide ${
               estado === 'perdido' 
-                ? 'bg-rose-50/90 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400' 
+                ? 'bg-rose-50/90 dark:bg-rose-950/70 text-rose-600 dark:text-rose-455' 
                 : 'bg-emerald-50/90 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-450'
             }`}>
               <span className={`w-1.5 h-1.5 rounded-full ${estado === 'perdido' ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`} />
@@ -144,7 +144,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="p-3 md:py-2.5 md:px-4 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-650 text-white rounded-xl md:rounded-2xl transition-colors flex-shrink-0 active:scale-95 shadow-sm shadow-emerald-600/10 dark:shadow-none cursor-pointer flex items-center gap-2 text-xs font-bold animate-fade-in"
+            className="p-3 md:py-2.5 md:px-4 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-650 text-white rounded-xl md:rounded-2xl transition-colors flex-shrink-0 active:scale-95 shadow-sm shadow-emerald-600/10 dark:shadow-none cursor-pointer flex items-center gap-2 text-xs font-bold"
             title="Contactar por WhatsApp"
           >
             <MessageCircle className="w-4.5 h-4.5 fill-white text-emerald-600 dark:text-emerald-500" />
@@ -179,7 +179,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
             <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-rose-50/95 dark:bg-rose-950/90 text-rose-600 dark:text-rose-455 border border-rose-200/50 dark:border-rose-900/30 backdrop-blur-sm shadow-sm">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-505"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
               </span>
               Perdido
             </span>
@@ -227,7 +227,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
         {señasParticulares && (
           <div className="mb-4 p-3 rounded-2xl bg-indigo-50/40 dark:bg-indigo-950/10 border border-indigo-100/40 dark:border-indigo-900/20 text-xs">
             <span className="font-semibold text-indigo-900 dark:text-indigo-200 block mb-0.5">Señas Particulares:</span>
-            <span className="text-slate-600 dark:text-slate-350 leading-relaxed truncate block">{señasParticulares}</span>
+            <span className="text-slate-600 dark:text-slate-355 leading-relaxed truncate block">{señasParticulares}</span>
           </div>
         )}
 
