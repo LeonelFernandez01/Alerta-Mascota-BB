@@ -286,12 +286,15 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
             <div className="space-y-3">
               {fotoBase64 ? (
                 /* Previsualización del archivo cargado */
-                <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 flex items-center justify-center">
-                  <img src={fotoBase64} alt="Previsualización" className="w-full h-full object-cover" />
+                <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-950 border border-slate-100 dark:border-slate-800 flex items-center justify-center">
+                  {/* Fondo difuminado para rellenar bordes */}
+                  <img src={fotoBase64} alt="" className="absolute inset-0 w-full h-full object-cover blur-md opacity-30 scale-105 pointer-events-none select-none" />
+                  {/* Imagen original centrada sin recortar */}
+                  <img src={fotoBase64} alt="Previsualización" className="relative z-10 max-w-full max-h-full object-contain pointer-events-none" />
                   <button
                     type="button"
                     onClick={() => setFotoBase64('')}
-                    className="absolute top-2 right-2 p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full transition-all cursor-pointer shadow-md active:scale-95 z-10"
+                    className="absolute top-2 right-2 p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full transition-all cursor-pointer shadow-md active:scale-95 z-20"
                     title="Remover imagen"
                   >
                     <X className="w-3.5 h-3.5" />

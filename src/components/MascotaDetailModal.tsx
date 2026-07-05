@@ -77,26 +77,33 @@ export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota,
         onClick={handleCardClick}
         className="w-full max-w-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30 dark:border-slate-800/40 rounded-[32px] shadow-2xl overflow-hidden flex flex-col relative my-8 transform scale-100 transition-transform duration-300 cursor-default"
       >
-        {/* Imagen del Reporte */}
-        <div className="relative aspect-video w-full bg-slate-100 dark:bg-slate-950 overflow-hidden flex-shrink-0">
+        {/* Imagen del Reporte (Foto completa con fondo difuminado) */}
+        <div className="relative h-[280px] sm:h-[340px] w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">
+          {/* Fondo difuminado para rellenar bordes */}
+          <img
+            src={fotoUrl}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover blur-md opacity-30 scale-105 pointer-events-none select-none"
+          />
+          {/* Foto original centrada sin recortar */}
           <img
             src={fotoUrl}
             alt={`Detalle Mascota ${estado}`}
-            className="w-full h-full object-cover"
+            className="relative z-10 max-w-full max-h-full object-contain pointer-events-none"
           />
           
-          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/40 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/40 to-transparent pointer-events-none z-20" />
 
           {/* Botón de Cierre */}
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 p-2 bg-slate-900/60 dark:bg-slate-950/60 text-white rounded-full hover:bg-slate-900/85 dark:hover:bg-slate-950/85 backdrop-blur-sm transition-all active:scale-95 cursor-pointer"
+            className="absolute top-3 right-3 p-2 bg-slate-900/60 dark:bg-slate-950/60 text-white rounded-full hover:bg-slate-900/85 dark:hover:bg-slate-950/85 backdrop-blur-sm transition-all active:scale-95 cursor-pointer z-20"
           >
             <X className="w-4 h-4" />
           </button>
 
           {/* Badge de Estado */}
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-3 left-3 z-20">
             {estado === 'perdido' ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-rose-50/95 dark:bg-rose-950/90 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/30 backdrop-blur-sm shadow-sm">
                 <span className="relative flex h-2 w-2">
