@@ -15,13 +15,13 @@ export const FeedPage: React.FC = () => {
     filtros,
     setFiltro,
     resetearFiltros,
-    recargarMascotas
+    recargarMascotas,
+    vista
   } = useMascotas();
 
   const [selectedMascota, setSelectedMascota] = useState<MascotaReportada | null>(null);
   
   // Estados para optimizar UX de Scroll y Layout
-  const [vista, setVista] = useState<'grid' | 'list'>('grid');
   const [limiteCarga, setLimiteCarga] = useState(4);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -90,29 +90,7 @@ export const FeedPage: React.FC = () => {
       {/* Listado de Mascotas */}
       <main className={feedStyles.container}>
         
-        {/* Toggle de vistas para Desktop */}
-        <div className="hidden md:flex justify-end gap-2 px-2">
-          <button
-            onClick={() => setVista('grid')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
-              vista === 'grid' 
-                ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/10' 
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-            }`}
-          >
-            Cuadrícula
-          </button>
-          <button
-            onClick={() => setVista('list')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
-              vista === 'list' 
-                ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/10' 
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-            }`}
-          >
-            Lista compacta
-          </button>
-        </div>
+
 
         {/* Cartel Informativo Comunitario */}
         <div className={feedStyles.infoBanner}>

@@ -20,6 +20,8 @@ export interface MascotasContextType {
   resetearFiltros: () => void;
   agregarReporte: (nuevoReporte: Omit<MascotaReportada, 'id' | 'fecha'>) => Promise<MascotaReportada | null>;
   recargarMascotas: () => Promise<void>;
+  vista: 'grid' | 'list';
+  toggleVista: () => void;
 }
 
 export const MascotasContext = createContext<MascotasContextType | undefined>(undefined);
@@ -36,6 +38,19 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+
+  const [vista, setVista] = useState<'grid' | 'list'>(() => {
+    const stored = localStorage.getItem('alerta_mascota_bb_vista');
+    return (stored === 'grid' || stored === 'list') ? stored : 'grid';
+  });
+
+  const toggleVista = useCallback(() => {
+    setVista(prev => {
+      const next = prev === 'grid' ? 'list' : 'grid';
+      localStorage.setItem('alerta_mascota_bb_vista', next);
+      return next;
+    });
+  }, []);
 
   const [filtros, setFiltros] = useState<FiltrosMascotas>({
     barrio: 'todos',
@@ -122,8 +137,10 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setFiltro,
     resetearFiltros,
     agregarReporte,
-    recargarMascotas: cargarMascotas
-  }), [mascotasFiltradas, mascotas, loading, error, isSaving, filtros, setFiltro, resetearFiltros, agregarReporte, cargarMascotas]);
+    recargarMascotas: cargarMascotas,
+    vista,
+    toggleVista
+  }), [mascotasFiltradas, mascotas, loading, error, isSaving, filtros, setFiltro, resetearFiltros, agregarReporte, cargarMascotas, vista, toggleVista]);
 
   return (
     <MascotasContext.Provider value={value}>

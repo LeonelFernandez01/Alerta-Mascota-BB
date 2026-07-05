@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, RefreshCw, Sun, Moon, Home, HeartHandshake, HelpCircle, CheckCircle2 } from 'lucide-react';
+import { Plus, RefreshCw, Sun, Moon, Home, HeartHandshake, HelpCircle, CheckCircle2, LayoutGrid, List } from 'lucide-react';
 import { FeedPage } from './pages/FeedPage';
 import { RecursosPage } from './pages/RecursosPage';
 import { InfoPage } from './pages/InfoPage';
@@ -11,7 +11,7 @@ import { ReportModal } from './components/ReportModal';
 type TabId = 'feed' | 'recursos' | 'info';
 
 function MainLayout() {
-  const { agregarReporte, recargarMascotas, loading } = useMascotas();
+  const { agregarReporte, recargarMascotas, loading, vista, toggleVista } = useMascotas();
   const { isDarkMode, toggleTheme } = useDarkMode();
   const [activeTab, setActiveTab] = useState<TabId>('feed');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,6 +72,17 @@ function MainLayout() {
         <div className="flex items-center gap-2">
           
           {/* Botón de Modo Oscuro */}
+          {/* Selector de Vista (Cuadrícula / Lista) */}
+          {activeTab === 'feed' && (
+            <button
+              onClick={toggleVista}
+              className="p-2 text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300 active:scale-95 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all cursor-pointer mr-1"
+              title={vista === 'grid' ? "Cambiar a vista de lista compacta" : "Cambiar a vista de cuadrícula"}
+            >
+              {vista === 'grid' ? <List className="w-4.5 h-4.5" /> : <LayoutGrid className="w-4.5 h-4.5" />}
+            </button>
+          )}
+
           <button
             onClick={toggleTheme}
             className="p-2 text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300 active:scale-95 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all cursor-pointer mr-1"
