@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="pinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Pin de mapa localizador -->
+  <path d="M50,92 C50,92 84,56 84,38 A34,34 0 1,0 16,38 C16,56 50,92 50,92 Z" fill="url(#pinGrad)" />
+  
+  <!-- Almohadilla central de la huella -->
+  <path d="M50,56 C44,56 41,51 41,47 C41,43 45,41 50,41 C55,41 59,43 59,47 C59,51 56,56 50,56 Z" fill="#ffffff" />
+  
+  <!-- Dedos de la huella -->
+  <circle cx="36" cy="36" r="5" fill="#ffffff" />
+  <circle cx="45" cy="28" r="5" fill="#ffffff" />
+  <circle cx="55" cy="28" r="5" fill="#ffffff" />
+  <circle cx="64" cy="36" r="5" fill="#ffffff" />
+</svg>
