@@ -7,7 +7,7 @@ export const recursosStyles = {
   subtitle: "text-xs text-slate-505 dark:text-slate-400 mt-1",
   
   // Tarjetas informativas
-  card: "bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between transition-colors duration-300",
+  card: "glass-panel p-5 rounded-[28px] shadow-[0_8px_30px_rgba(99,102,241,0.02)] dark:shadow-[0_8px_32px_rgba(99,102,241,0.05)] hover:shadow-[0_15px_30px_rgba(99,102,241,0.08)] transition-all duration-300 flex flex-col justify-between",
   cardHeader: "flex items-start justify-between gap-3",
   cardTitle: "font-bold text-slate-800 dark:text-white text-sm md:text-base",
   
@@ -28,7 +28,7 @@ export const recursosStyles = {
   contactButton: "flex items-center justify-center gap-1.5 bg-indigo-50 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-semibold py-2.5 px-4 rounded-xl text-xs transition-colors active:scale-98 cursor-pointer",
   
   // Sección inferior de consejos y guías rápidas
-  tipsContainer: "p-5 rounded-3xl bg-indigo-50/30 dark:bg-indigo-950/10 border border-indigo-100/50 dark:border-indigo-900/20 space-y-3",
+  tipsContainer: "glass-panel p-5 rounded-[28px] shadow-[0_8px_30px_rgba(99,102,241,0.02)] dark:shadow-[0_8px_32px_rgba(99,102,241,0.05)] space-y-3",
   tipsTitle: "text-xs md:text-sm font-bold text-indigo-900 dark:text-indigo-200 flex items-center gap-2",
   tipsIcon: "w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400",
   tipsList: "list-disc pl-5 text-xs text-slate-600 dark:text-slate-300 space-y-2 leading-relaxed"

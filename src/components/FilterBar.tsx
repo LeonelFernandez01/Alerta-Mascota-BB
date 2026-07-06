@@ -35,7 +35,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     filtros.busqueda !== '';
 
   return (
-    <div className="w-full space-y-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-30 p-4 border-b border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300">
+    <div className="w-full space-y-4 glass-panel rounded-3xl p-5 shadow-[0_8px_30px_rgba(99,102,241,0.02)] dark:shadow-[0_8px_32px_rgba(99,102,241,0.05)] border border-white/40 dark:border-slate-800/50 transition-all duration-300">
       {/* Barra de Búsqueda */}
       <div className="relative w-full">
         <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
@@ -46,7 +46,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           value={filtros.busqueda}
           onChange={(e) => setFiltro('busqueda', e.target.value)}
           placeholder="Buscar señas, raza, contacto..."
-          className="w-full pl-10 pr-10 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl text-sm focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-all text-slate-700 dark:text-slate-200"
+          className="w-full pl-10 pr-10 py-2.5 bg-white/40 dark:bg-slate-950/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-sm focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-700 dark:text-slate-200"
         />
         {filtros.busqueda && (
           <button
@@ -60,7 +60,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
       {/* Tipo de Animal (Pills) */}
       <div className="space-y-1.5">
-        <label className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 px-1">
+        <label className="text-[10px] font-bold text-slate-450 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 px-1">
           <Grid className="w-3 h-3 text-slate-400 dark:text-slate-500" />
           ¿Qué buscas?
         </label>
@@ -71,10 +71,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               <button
                 key={t}
                 onClick={() => setFiltro('tipo', t)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap capitalize transition-all active:scale-95 cursor-pointer ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap capitalize transition-all active:scale-95 cursor-pointer border ${
                   isSelected
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-sm shadow-slate-900/10'
-                    : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-100/50 dark:border-slate-700/50'
+                    ? 'bg-indigo-600 dark:bg-indigo-550 text-white shadow-md shadow-indigo-600/20 border-indigo-600 dark:border-indigo-550'
+                    : 'bg-white/40 dark:bg-slate-900/40 text-slate-600 dark:text-slate-350 hover:bg-white/70 dark:hover:bg-slate-900/70 border-slate-250/30 dark:border-slate-800/40'
                 }`}
               >
                 {t === 'todos' ? 'Todos' : t}
@@ -86,7 +86,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
       {/* Estado (Pills) */}
       <div className="space-y-1.5">
-        <label className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 px-1">
+        <label className="text-[10px] font-bold text-slate-450 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5 px-1">
           <Heart className="w-3 h-3 text-slate-400 dark:text-slate-500" />
           Estado de Alerta
         </label>
@@ -95,18 +95,18 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             const isSelected = filtros.estado === est;
             
             // Colores temáticos según el estado
-            let activeClass = 'bg-slate-900 dark:bg-white text-white dark:text-slate-950';
-            if (est === 'perdido') activeClass = 'bg-rose-600 dark:bg-rose-500 text-white shadow-sm shadow-rose-600/10';
-            if (est === 'encontrado') activeClass = 'bg-emerald-600 dark:bg-emerald-500 text-white shadow-sm shadow-emerald-600/10';
+            let activeClass = 'bg-indigo-600 dark:bg-indigo-550 text-white border-indigo-600 dark:border-indigo-550 shadow-md shadow-indigo-600/20';
+            if (est === 'perdido') activeClass = 'bg-rose-600 dark:bg-rose-500 text-white border-rose-600 dark:border-rose-500 shadow-md shadow-rose-600/25';
+            if (est === 'encontrado') activeClass = 'bg-emerald-600 dark:bg-emerald-500 text-white border-emerald-600 dark:border-emerald-500 shadow-md shadow-emerald-600/25';
 
             return (
               <button
                 key={est}
                 onClick={() => setFiltro('estado', est)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap capitalize transition-all active:scale-95 cursor-pointer ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap capitalize transition-all active:scale-95 cursor-pointer border ${
                   isSelected
                     ? activeClass
-                    : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-100/50 dark:border-slate-700/50'
+                    : 'bg-white/40 dark:bg-slate-900/40 text-slate-600 dark:text-slate-355 hover:bg-white/70 dark:hover:bg-slate-900/70 border-slate-250/30 dark:border-slate-800/40'
                 }`}
               >
                 {est === 'todos' ? 'Cualquier Estado' : est}
@@ -119,7 +119,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       {/* Barrios (Pills) */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between px-1">
-          <label className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+          <label className="text-[10px] font-bold text-slate-450 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <Map className="w-3 h-3 text-slate-400 dark:text-slate-500" />
             Barrio (Bahía Blanca)
           </label>
@@ -140,10 +140,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               <button
                 key={b}
                 onClick={() => setFiltro('barrio', b)}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all active:scale-95 cursor-pointer ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all active:scale-95 cursor-pointer border ${
                   isSelected
-                    ? 'bg-indigo-600 dark:bg-indigo-500 text-white shadow-sm shadow-indigo-600/15'
-                    : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-100/50 dark:border-slate-700/50'
+                    ? 'bg-indigo-600 dark:bg-indigo-550 text-white shadow-md shadow-indigo-600/20 border-indigo-600 dark:border-indigo-550'
+                    : 'bg-white/40 dark:bg-slate-900/40 text-slate-600 dark:text-slate-350 hover:bg-white/70 dark:hover:bg-slate-900/70 border-slate-250/30 dark:border-slate-800/40'
                 }`}
               >
                 {b === 'todos' ? 'Todos los Barrios' : b}

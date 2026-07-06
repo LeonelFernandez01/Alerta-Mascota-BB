@@ -154,14 +154,14 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm transition-all duration-300">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-955/45 dark:bg-black/65 backdrop-blur-xl transition-all duration-300">
       {/* Contenedor del Modal */}
-      <div className="w-full sm:max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 flex flex-col max-h-[92vh] sm:max-h-[85vh] overflow-hidden transform transition-all duration-300 translate-y-0 transition-colors duration-300">
+      <div className="w-full sm:max-w-lg glass-panel rounded-t-3xl sm:rounded-3xl shadow-[0_32px_64px_rgba(99,102,241,0.18)] dark:shadow-[0_32px_64px_rgba(99,102,241,0.22)] border border-white/40 dark:border-slate-800/50 flex flex-col max-h-[92vh] sm:max-h-[85vh] overflow-hidden transform transition-all duration-300 translate-y-0">
         
         {/* Cabecera del Modal */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 transition-colors duration-300">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 dark:border-slate-800/40 bg-white/20 dark:bg-slate-900/30 transition-colors duration-300">
           <div>
-            <h3 className="font-bold text-slate-800 dark:text-white text-base">Crear Alerta de Mascota</h3>
+            <h3 className="font-bold text-slate-850 dark:text-white text-base">Crear Alerta de Mascota</h3>
             <p className="text-[11px] text-slate-500 dark:text-slate-400">Completa los datos para publicarlo en la comunidad</p>
           </div>
           <button
@@ -173,7 +173,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
         </div>
 
         {/* Cuerpo del Formulario con scroll */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5 flex-grow bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5 flex-grow bg-transparent text-slate-800 dark:text-slate-100">
           {validationError && (
             <div className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 text-xs flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
@@ -187,7 +187,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
               <label className="block text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
                 Tipo de Animal
               </label>
-              <div className="flex gap-1 bg-slate-50 dark:bg-slate-800 p-1 rounded-2xl border border-slate-100 dark:border-slate-800">
+              <div className="flex gap-1 bg-white/30 dark:bg-slate-950/40 p-1 rounded-2xl border border-slate-200/40 dark:border-slate-800/50">
                 {(['perro', 'gato', 'otro'] as TipoAnimal[]).map((animal) => {
                   const isSel = tipo === animal;
                   return (
@@ -195,10 +195,10 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
                       key={animal}
                       type="button"
                       onClick={() => setTipo(animal)}
-                      className={`flex-1 py-2 rounded-xl text-xs font-semibold flex flex-col items-center justify-center gap-1 transition-all capitalize cursor-pointer ${
+                      className={`flex-1 py-2 rounded-xl text-xs font-semibold flex flex-col items-center justify-center gap-1 transition-all capitalize cursor-pointer border ${
                         isSel
-                          ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-700/50 font-bold'
-                          : 'text-slate-505 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                          ? 'bg-indigo-600 dark:bg-indigo-550 text-white shadow-md shadow-indigo-600/20 border-indigo-600 dark:border-indigo-550 font-bold'
+                          : 'text-slate-505 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-350 border-transparent'
                       }`}
                     >
                       {animal === 'perro' && <Dog className="w-3.5 h-3.5" />}
@@ -215,21 +215,21 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
               <label className="block text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
                 Estado del Reporte
               </label>
-              <div className="flex gap-1 bg-slate-50 dark:bg-slate-800 p-1 rounded-2xl border border-slate-100 dark:border-slate-800">
+              <div className="flex gap-1 bg-white/30 dark:bg-slate-950/40 p-1 rounded-2xl border border-slate-200/40 dark:border-slate-800/50">
                 {(['perdido', 'encontrado'] as EstadoMascota[]).map((est) => {
                   const isSel = estado === est;
-                  let selectedStyles = 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm border border-slate-200/50 dark:border-slate-700/50 font-bold';
+                  let selectedStyles = 'bg-indigo-600 dark:bg-indigo-550 text-white border-indigo-600 dark:border-indigo-550 shadow-md shadow-indigo-600/20 font-bold';
                   
-                  if (isSel && est === 'perdido') selectedStyles = 'bg-rose-50 dark:bg-rose-950/20 border border-rose-200/60 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 font-bold';
-                  if (isSel && est === 'encontrado') selectedStyles = 'bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-bold';
+                  if (isSel && est === 'perdido') selectedStyles = 'bg-rose-600 dark:bg-rose-500 text-white border-rose-600 dark:border-rose-500 shadow-md shadow-rose-600/20 font-bold';
+                  if (isSel && est === 'encontrado') selectedStyles = 'bg-emerald-600 dark:bg-emerald-500 text-white border-emerald-600 dark:border-emerald-500 shadow-md shadow-emerald-600/20 font-bold';
 
                   return (
                     <button
                       key={est}
                       type="button"
                       onClick={() => setEstado(est)}
-                      className={`flex-1 py-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition-all capitalize cursor-pointer ${
-                        isSel ? selectedStyles : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                      className={`flex-1 py-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition-all capitalize cursor-pointer border ${
+                        isSel ? selectedStyles : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border-transparent'
                       }`}
                     >
                       <span className={`w-1.5 h-1.5 rounded-full ${est === 'perdido' ? 'bg-rose-500' : 'bg-emerald-500'}`} />
@@ -251,7 +251,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
               <select
                 value={barrio}
                 onChange={(e) => setBarrio(e.target.value as BarrioBahia)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 text-slate-700 dark:text-slate-200"
+                className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-750 dark:text-slate-200"
               >
                 {BARRIOS_LIST.map((b) => (
                   <option key={b} value={b} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
@@ -271,7 +271,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
                 placeholder="Ej: Alem al 1200, Frente a Plaza"
                 value={zonaEspecifica}
                 onChange={(e) => setZonaEspecifica(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 text-slate-700 dark:text-slate-200"
+                className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-750 dark:text-slate-200"
               />
             </div>
           </div>
@@ -304,12 +304,12 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
                 /* Dropzone / Botón de Carga */
                 <label 
                   htmlFor="foto-upload"
-                  className="flex flex-col items-center justify-center w-full aspect-video rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 hover:bg-slate-50 dark:hover:bg-slate-850/50 cursor-pointer transition-colors p-4 text-center group"
+                  className="flex flex-col items-center justify-center w-full aspect-video rounded-2xl border-2 border-dashed border-slate-200/50 dark:border-slate-800/55 bg-white/30 dark:bg-slate-950/20 hover:bg-white/60 dark:hover:bg-slate-950/40 cursor-pointer transition-all p-4 text-center group"
                 >
                   <div className="flex flex-col items-center justify-center space-y-1.5">
                     <PlusCircle className="w-8 h-8 text-indigo-500 dark:text-indigo-400 transition-transform group-hover:scale-105" />
                     <p className="text-xs font-bold text-slate-700 dark:text-slate-200">Subir imagen desde el dispositivo</p>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500">Haz una foto o selecciónala (Max. 2MB)</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-505 font-medium">Haz una foto o selecciónala (Max. 2MB)</p>
                   </div>
                   <input 
                     id="foto-upload" 
@@ -333,7 +333,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
                       setFotoUrl(e.target.value);
                       if (e.target.value) setFotoBase64('');
                     }}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 text-slate-700 dark:text-slate-200"
+                    className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-750 dark:text-slate-200"
                   />
                 </div>
               )}
@@ -351,7 +351,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
               rows={3}
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 text-slate-700 dark:text-slate-200 resize-none leading-relaxed"
+              className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-705 dark:text-slate-200 resize-none leading-relaxed"
             />
           </div>
 
@@ -365,7 +365,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
               placeholder="Ej: Mancha blanca en la pata derecha, collar verde"
               value={señasParticulares}
               onChange={(e) => setSeñasParticulares(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 text-slate-700 dark:text-slate-200"
+              className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-705 dark:text-slate-200"
             />
           </div>
 
@@ -381,7 +381,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
                 placeholder="Tu nombre"
                 value={nombreContacto}
                 onChange={(e) => setNombreContacto(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 text-slate-700 dark:text-slate-200"
+                className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-705 dark:text-slate-200"
               />
             </div>
 
@@ -395,25 +395,25 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
                 placeholder="Ej: 2914567890"
                 value={telefonoContacto}
                 onChange={(e) => setTelefonoContacto(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 text-slate-700 dark:text-slate-200"
+                className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-705 dark:text-slate-200"
               />
             </div>
           </div>
 
           {/* Botones de acción */}
-          <div className="flex gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex gap-3 pt-3 border-t border-white/10 dark:border-slate-800/40">
             <button
               type="button"
               onClick={onClose}
               disabled={submitting}
-              className="flex-1 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-2xl text-xs transition-colors active:scale-95 disabled:opacity-50 cursor-pointer"
+              className="flex-1 py-3 bg-white/30 dark:bg-slate-800/50 hover:bg-white/60 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-semibold rounded-2xl text-xs transition-colors active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-semibold rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/10 active:scale-95 disabled:opacity-50 cursor-pointer"
+              className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white font-semibold rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/20 active:scale-95 disabled:opacity-50 cursor-pointer"
             >
               {submitting ? (
                 <>

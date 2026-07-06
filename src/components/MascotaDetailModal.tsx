@@ -70,12 +70,12 @@ export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota,
   return (
     <div 
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-955/40 dark:bg-black/60 backdrop-blur-md transition-all duration-300 animate-fade-in overflow-y-auto cursor-pointer"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/45 dark:bg-black/65 backdrop-blur-xl transition-all duration-300 animate-fade-in overflow-y-auto cursor-pointer"
     >
       {/* Tarjeta con Efecto Glassmorphism Avanzado */}
       <div 
         onClick={handleCardClick}
-        className="w-full max-w-lg bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border border-white/30 dark:border-slate-800/40 rounded-[32px] shadow-2xl overflow-hidden flex flex-col relative my-8 transform scale-100 transition-transform duration-300 cursor-default"
+        className="w-full max-w-lg glass-panel rounded-[32px] shadow-[0_32px_64px_rgba(99,102,241,0.18)] dark:shadow-[0_32px_64px_rgba(99,102,241,0.22)] border border-white/40 dark:border-slate-800/50 overflow-hidden flex flex-col relative my-8 transform scale-100 transition-transform duration-300 cursor-default"
       >
         {/* Imagen del Reporte (Foto completa con fondo difuminado) */}
         <div className="relative h-[280px] sm:h-[340px] w-full bg-slate-950 overflow-hidden flex items-center justify-center flex-shrink-0">

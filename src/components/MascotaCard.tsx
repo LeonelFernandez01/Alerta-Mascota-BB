@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle } from 'lucide-react';
 import type { MascotaReportada } from '../types/mascota';
 
@@ -21,6 +21,49 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
     telefonoContacto,
     nombreContacto,
   } = mascota;
+
+  const cardRef = useRef<HTMLDivElement>(null);
+  const glareRef = useRef<HTMLDivElement>(null);
+
+  // Inclinación Interactiva 3D y Glare
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (window.matchMedia('(hover: none)').matches) return; // Ignorar en táctiles
+
+    const card = cardRef.current;
+    const glare = glareRef.current;
+    if (!card) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const xc = rect.width / 2;
+    const yc = rect.height / 2;
+    
+    // Inclinación moderada de hasta 8 grados para mantener legibilidad
+    const rotateX = ((yc - y) / yc) * 8;
+    const rotateY = ((x - xc) / xc) * 8;
+    
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.015, 1.015, 1.015)`;
+    
+    if (glare) {
+      const percentageX = (x / rect.width) * 100;
+      const percentageY = (y / rect.height) * 100;
+      glare.style.background = `radial-gradient(circle at ${percentageX}% ${percentageY}%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 65%)`;
+      glare.style.opacity = '1';
+    }
+  };
+
+  const handleMouseLeave = () => {
+    const card = cardRef.current;
+    const glare = glareRef.current;
+    if (!card) return;
+
+    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+    if (glare) {
+      glare.style.opacity = '0';
+    }
+  };
 
   // Formatear la fecha para hacerla amigable y relativa
   const formatearFecha = (isoString: string): string => {
@@ -77,7 +120,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
     return (
       <article 
         onClick={onClick}
-        className="group bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl shadow-sm border border-slate-100/80 dark:border-slate-800/80 overflow-hidden transition-all duration-300 hover:shadow-md flex items-center p-3 md:p-4 gap-3.5 md:gap-5 transition-colors cursor-pointer w-full"
+        className="group glass-panel rounded-2xl md:rounded-[24px] shadow-[0_8px_30px_rgba(99,102,241,0.02)] dark:shadow-[0_8px_32px_rgba(99,102,241,0.05)] hover:shadow-[0_15px_30px_rgba(99,102,241,0.08)] border border-white/40 dark:border-slate-800/50 overflow-hidden flex items-center p-3 md:p-4 gap-3.5 md:gap-5 transition-all duration-300 cursor-pointer w-full active:scale-[0.98]"
       >
         {/* Foto de la Mascota a la izquierda */}
         <div className="relative w-16 h-16 md:w-24 md:h-24 rounded-xl md:rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-950 flex-shrink-0">
@@ -100,7 +143,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
           <div className="flex items-center gap-1.5 mt-0.5 mb-1 flex-wrap">
             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-bold tracking-wide ${
               estado === 'perdido' 
-                ? 'bg-rose-50/90 dark:bg-rose-950/70 text-rose-600 dark:text-rose-455' 
+                ? 'bg-rose-50/90 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400' 
                 : 'bg-emerald-50/90 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-450'
             }`}>
               <span className={`w-1.5 h-1.5 rounded-full ${estado === 'perdido' ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`} />
@@ -113,28 +156,28 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
             </span>
           </div>
 
-          {/* Breve descripción snippet (solo visible en tablets/desktop) */}
-          <p className="hidden md:block text-slate-500 dark:text-slate-350 text-xs leading-relaxed mt-1 mb-2 line-clamp-2 max-w-xl">
+          {/* Breve descripción snippet */}
+          <p className="hidden md:block text-slate-500 dark:text-slate-355 text-xs leading-relaxed mt-1 mb-2 line-clamp-2 max-w-xl">
             {descripcion}
           </p>
 
-          {/* Fecha y nombre del reportante (Móvil) */}
+          {/* Fecha y nombre del reportante */}
           <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500 truncate leading-none md:mt-0.5">
             <Calendar className="w-3 h-3 flex-shrink-0" />
             <span className="truncate">{formatearFecha(fecha)} <span className="sm:hidden">• Por {nombreContacto}</span></span>
           </div>
         </div>
 
-        {/* Sección de contacto derecha (Redistribuida para responsive) */}
+        {/* Sección de contacto derecha */}
         <div className="flex items-center gap-3 flex-shrink-0">
-          {/* Perfil del reportante (Oculto en móvil, visible en tablets/desktop) */}
+          {/* Perfil del reportante */}
           <div className="hidden sm:flex items-center gap-2 border-l border-slate-100 dark:border-slate-800 pl-4 mr-1">
             <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-semibold text-xs border border-slate-200 dark:border-slate-700 flex-shrink-0">
               {nombreContacto.charAt(0).toUpperCase()}
             </div>
             <div className="max-w-[90px] overflow-hidden text-left">
               <span className="text-slate-800 dark:text-slate-200 text-xs font-semibold block truncate leading-tight">{nombreContacto}</span>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-none mt-0.5">Reportante</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-505 block leading-none mt-0.5">Reportante</span>
             </div>
           </div>
 
@@ -155,14 +198,28 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
     );
   }
 
-  // 2. RENDERIZADO VISTA DE CUADRÍCULA (GRID) CLÁSICA
+  // 2. RENDERIZADO VISTA DE CUADRÍCULA (GRID) CON EFECTOS TILT 3D
   return (
     <article 
+      ref={cardRef}
       onClick={onClick}
-      className="group bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-100/80 dark:border-slate-800/80 overflow-hidden transition-all duration-300 hover:shadow-md hover:scale-[1.01] flex flex-col h-full transition-colors duration-300 cursor-pointer"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ 
+        transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease', 
+        transformStyle: 'preserve-3d' 
+      }}
+      className="group glass-panel rounded-[30px] shadow-[0_8px_30px_rgba(99,102,241,0.02)] dark:shadow-[0_8px_32px_rgba(99,102,241,0.05)] hover:shadow-[0_20px_40px_rgba(99,102,241,0.12)] border border-white/40 dark:border-slate-800/50 overflow-hidden flex flex-col h-full cursor-pointer relative"
     >
+      {/* Reflejo Glare de Luz 3D */}
+      <div 
+        ref={glareRef} 
+        className="absolute inset-0 pointer-events-none z-30 opacity-0 transition-opacity duration-300"
+        style={{ mixBlendMode: 'overlay' }}
+      />
+
       {/* Sección de la Imagen */}
-      <div className="relative aspect-square w-full bg-slate-50 dark:bg-slate-950 overflow-hidden">
+      <div className="relative aspect-square w-full bg-slate-50 dark:bg-slate-950 overflow-hidden" style={{ transform: 'translateZ(10px)' }}>
         <img
           src={fotoUrl}
           alt={`Mascota ${estado}`}
@@ -171,12 +228,12 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
         />
         
         {/* Capa de degradado superior para visibilidad de los badges */}
-        <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/35 to-transparent pointer-events-none" />
+        <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/35 to-transparent pointer-events-none z-10" />
 
         {/* Badge de Estado (Perdido/Encontrado) */}
-        <div className="absolute top-3 left-3 z-10">
+        <div className="absolute top-3 left-3 z-20">
           {estado === 'perdido' ? (
-            <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-rose-50/95 dark:bg-rose-950/90 text-rose-600 dark:text-rose-455 border border-rose-200/50 dark:border-rose-900/30 backdrop-blur-sm shadow-sm">
+            <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-rose-50/95 dark:bg-rose-950/90 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/30 backdrop-blur-sm shadow-sm">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
@@ -192,7 +249,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
         </div>
 
         {/* Badge del tipo de animal */}
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-3 right-3 z-20">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-900/75 dark:bg-slate-950/85 text-white backdrop-blur-sm shadow-sm capitalize">
             {obtenerIconoAnimal()}
             {tipo}
@@ -201,7 +258,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
       </div>
 
       {/* Contenido de la Tarjeta */}
-      <div className="p-5 flex flex-col flex-grow">
+      <div className="p-5 flex flex-col flex-grow" style={{ transform: 'translateZ(15px)' }}>
         {/* Ubicación y Barrio */}
         <div className="flex items-start gap-1.5 text-indigo-600 dark:text-indigo-400 font-semibold tracking-tight text-xs uppercase mb-1">
           <MapPin className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-indigo-500 dark:text-indigo-400" />
@@ -227,7 +284,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
         {señasParticulares && (
           <div className="mb-4 p-3 rounded-2xl bg-indigo-50/40 dark:bg-indigo-950/10 border border-indigo-100/40 dark:border-indigo-900/20 text-xs">
             <span className="font-semibold text-indigo-900 dark:text-indigo-200 block mb-0.5">Señas Particulares:</span>
-            <span className="text-slate-600 dark:text-slate-355 leading-relaxed truncate block">{señasParticulares}</span>
+            <span className="text-slate-600 dark:text-slate-350 leading-relaxed truncate block">{señasParticulares}</span>
           </div>
         )}
 
@@ -251,7 +308,7 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="flex items-center justify-center gap-2 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-650 text-white font-semibold py-2.5 px-4 rounded-2xl text-xs transition-colors w-full active:scale-[0.98] shadow-sm shadow-emerald-600/10 dark:shadow-none cursor-pointer mt-auto"
+          className="flex items-center justify-center gap-2 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-650 text-white font-semibold py-2.5 px-4 rounded-2xl text-xs transition-colors w-full active:scale-[0.98] shadow-sm shadow-emerald-600/10 dark:shadow-none cursor-pointer mt-auto z-10"
         >
           <MessageCircle className="w-4 h-4 fill-white text-emerald-600 dark:text-emerald-500" />
           Contactar por WhatsApp

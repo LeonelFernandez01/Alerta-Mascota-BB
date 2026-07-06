@@ -29,9 +29,14 @@ function MainLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col antialiased transition-colors duration-300">
-      {/* Cabecera Responsiva */}
-      <header className="bg-white dark:bg-slate-900 sticky top-0 z-40 px-6 py-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-800 shadow-sm flex-shrink-0 transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col antialiased transition-colors duration-300 relative overflow-x-hidden">
+      {/* Esferas de Resplandor Neon de Fondo (Ambient Glows) con Flotación Lenta */}
+      <div className="absolute w-[350px] h-[350px] rounded-full bg-indigo-500/5 dark:bg-indigo-500/10 blur-[130px] top-[10%] -left-[100px] pointer-events-none z-0 animate-float-slow" />
+      <div className="absolute w-[300px] h-[300px] rounded-full bg-purple-500/5 dark:bg-purple-500/8 blur-[120px] top-[40%] -right-[80px] pointer-events-none z-0 animate-float-slow-alt" />
+      <div className="absolute w-[280px] h-[280px] rounded-full bg-indigo-500/5 dark:bg-indigo-500/8 blur-[110px] bottom-[15%] left-[5%] pointer-events-none z-0 animate-float-slow" />
+
+      {/* Cabecera Responsiva Flotante de Vidrio */}
+      <header className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl sticky top-0 z-40 px-6 py-4 flex items-center justify-between border-b border-white/20 dark:border-slate-800/40 shadow-sm flex-shrink-0 transition-all duration-300">
         <div className="flex items-center gap-3">
           <img src="/logo.svg" alt="Alerta Mascota BB Logo" className="w-9 h-9 object-contain cursor-pointer animate-fade-in" onClick={() => setActiveTab('feed')} />
           <div>
@@ -127,8 +132,8 @@ function MainLayout() {
         </div>
       )}
 
-      {/* Navegación Inferior Móvil */}
-      <nav className="fixed bottom-0 inset-x-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-100/90 dark:border-slate-800/90 py-3.5 px-4 flex items-center justify-around z-35 shadow-[0_-5px_15px_rgba(0,0,0,0.03)] md:hidden transition-colors duration-300">
+      {/* Navegación Inferior Móvil Estilo Vidrio Esmerilado */}
+      <nav className="fixed bottom-0 inset-x-0 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl border-t border-white/20 dark:border-slate-800/40 py-3.5 px-4 flex items-center justify-around z-35 shadow-[0_-8px_30px_rgba(0,0,0,0.02)] md:hidden transition-all duration-300">
         <button
           onClick={() => setActiveTab('feed')}
           className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${

@@ -9,8 +9,8 @@ export const infoStyles = {
   subtitle: "text-[10px] text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-widest mt-1",
   
   // Caja de contenido principal
-  contentBox: "space-y-5 text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-white dark:bg-slate-900 p-6 md:p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm transition-colors duration-300",
-  sectionTitle: "font-bold text-slate-800 dark:text-white text-sm md:text-base border-b border-slate-100 dark:border-slate-800 pb-2",
+  contentBox: "space-y-5 text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed glass-panel p-6 md:p-8 rounded-[28px] shadow-[0_8px_30px_rgba(99,102,241,0.02)] dark:shadow-[0_8px_32px_rgba(99,102,241,0.05)] transition-all duration-300",
+  sectionTitle: "font-bold text-slate-800 dark:text-white text-sm md:text-base border-b border-slate-100/10 dark:border-slate-800/40 pb-2",
   sectionTitleWithMargin: "font-bold text-slate-800 dark:text-white text-sm md:text-base border-b border-slate-100 dark:border-slate-800 pb-2 pt-2",
   list: "list-disc pl-5 space-y-2",
   
