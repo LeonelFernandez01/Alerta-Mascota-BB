@@ -123,12 +123,11 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
         className="group glass-panel rounded-2xl md:rounded-[24px] shadow-[0_8px_30px_rgba(99,102,241,0.02)] dark:shadow-[0_8px_32px_rgba(99,102,241,0.05)] hover:shadow-[0_15px_30px_rgba(99,102,241,0.08)] border border-white/40 dark:border-slate-800/50 overflow-hidden flex items-center p-3 md:p-4 gap-3.5 md:gap-5 transition-all duration-300 cursor-pointer w-full active:scale-[0.98]"
       >
         {/* Foto de la Mascota a la izquierda */}
-        <div className="relative w-16 h-16 md:w-24 md:h-24 rounded-xl md:rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-950 flex-shrink-0">
+        <div className="relative w-16 h-16 min-w-16 md:w-24 md:h-24 md:min-w-24 rounded-xl md:rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-950 flex-shrink-0">
           <img
             src={fotoUrl}
             alt={`Mascota ${estado}`}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
           />
         </div>
 
