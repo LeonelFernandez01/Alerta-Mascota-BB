@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Plus, RefreshCw, Sun, Moon, Home, HeartHandshake, HelpCircle, CheckCircle2, LayoutGrid, List } from 'lucide-react';
+import { Plus, RefreshCw, Sun, Moon, Home, HeartHandshake, HelpCircle, CheckCircle2, LayoutGrid, List, BarChart3 } from 'lucide-react';
 import { FeedPage } from './pages/FeedPage';
+import { EstadisticasPage } from './pages/EstadisticasPage';
 import { RecursosPage } from './pages/RecursosPage';
 import { InfoPage } from './pages/InfoPage';
 import { MascotasProvider } from './contexts/MascotasContext';
@@ -8,7 +9,7 @@ import { useMascotas } from './hooks/useMascotas';
 import { useDarkMode } from './hooks/useDarkMode';
 import { ReportModal } from './components/ReportModal';
 
-type TabId = 'feed' | 'recursos' | 'info';
+type TabId = 'feed' | 'estadisticas' | 'recursos' | 'info';
 
 function MainLayout() {
   const { agregarReporte, recargarMascotas, loading, vista, toggleVista } = useMascotas();
@@ -54,6 +55,14 @@ function MainLayout() {
             }`}
           >
             Feed de Alertas
+          </button>
+          <button
+            onClick={() => setActiveTab('estadisticas')}
+            className={`text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer ${
+              activeTab === 'estadisticas' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
+            }`}
+          >
+            Estadísticas
           </button>
           <button
             onClick={() => setActiveTab('recursos')}
@@ -120,6 +129,7 @@ function MainLayout() {
       {/* Contenido de la Página */}
       <div className="flex-grow w-full">
         {activeTab === 'feed' && <FeedPage />}
+        {activeTab === 'estadisticas' && <EstadisticasPage />}
         {activeTab === 'recursos' && <RecursosPage />}
         {activeTab === 'info' && <InfoPage />}
       </div>
@@ -142,6 +152,16 @@ function MainLayout() {
         >
           <Home className="w-5 h-5" />
           <span className="text-[10px] font-semibold">Alertas</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('estadisticas')}
+          className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
+            activeTab === 'estadisticas' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300'
+          }`}
+        >
+          <BarChart3 className="w-5 h-5" />
+          <span className="text-[10px] font-semibold">Stats</span>
         </button>
 
         <button
