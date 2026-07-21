@@ -1,6 +1,7 @@
-import React from 'react';
-import { X, MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle, Shield } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle, Shield, Sparkles } from 'lucide-react';
 import type { MascotaReportada } from '../types/mascota';
+import { FlyerPreviewModal } from './FlyerPreviewModal';
 
 interface MascotaDetailModalProps {
   mascota: MascotaReportada | null;
@@ -8,6 +9,8 @@ interface MascotaDetailModalProps {
 }
 
 export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota, onClose }) => {
+  const [isFlyerOpen, setIsFlyerOpen] = useState(false);
+
   if (!mascota) return null;
 
   const {
@@ -179,19 +182,34 @@ export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota,
           </div>
         </div>
 
-        {/* Footer con Botón a lo ancho */}
-        <div className="p-6 border-t border-white/20 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/30 flex-shrink-0">
+        {/* Footer con Botones de Acción */}
+        <div className="p-6 border-t border-white/20 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/30 flex-shrink-0 flex flex-col sm:flex-row items-center gap-3">
+          <button
+            onClick={() => setIsFlyerOpen(true)}
+            className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-2xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98] cursor-pointer"
+          >
+            <Sparkles className="w-4 h-4 text-indigo-200" />
+            <span>Generar Cartel</span>
+          </button>
+
           <a
             href={obtenerEnlaceWhatsApp()}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2.5 w-full bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white font-bold py-3.5 px-5 rounded-2xl text-xs transition-colors shadow-md shadow-emerald-600/10 dark:shadow-none active:scale-[0.99] cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-2.5 w-full bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600 text-white font-bold py-3.5 px-5 rounded-2xl text-xs transition-colors shadow-md shadow-emerald-600/10 dark:shadow-none active:scale-[0.99] cursor-pointer"
           >
             <MessageCircle className="w-4.5 h-4.5 fill-white text-emerald-600 dark:text-emerald-500" />
             Contactar por WhatsApp
           </a>
         </div>
       </div>
+
+      {/* Modal de Previsualización y Descarga del Afiche */}
+      <FlyerPreviewModal
+        mascota={mascota}
+        isOpen={isFlyerOpen}
+        onClose={() => setIsFlyerOpen(false)}
+      />
     </div>
   );
 };
