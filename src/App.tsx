@@ -1,22 +1,30 @@
 import { useState } from 'react';
-import { Plus, RefreshCw, Sun, Moon, Home, HeartHandshake, HelpCircle, CheckCircle2, LayoutGrid, List, BarChart3, MapPin } from 'lucide-react';
+import { Plus, RefreshCw, Sun, Moon, Home, CheckCircle2, LayoutGrid, List, BarChart3, MapPin, User, LogIn } from 'lucide-react';
 import { FeedPage } from './pages/FeedPage';
 import { MapaPage } from './pages/MapaPage';
 import { EstadisticasPage } from './pages/EstadisticasPage';
 import { RecursosPage } from './pages/RecursosPage';
 import { InfoPage } from './pages/InfoPage';
 import { MascotasProvider } from './contexts/MascotasContext';
+import { AuthProvider } from './contexts/AuthContext';
 import { useMascotas } from './hooks/useMascotas';
 import { useDarkMode } from './hooks/useDarkMode';
+import { useAuth } from './hooks/useAuth';
 import { ReportModal } from './components/ReportModal';
+import { AuthModal } from './components/AuthModal';
+import { UserProfileModal } from './components/UserProfileModal';
 
 type TabId = 'feed' | 'mapa' | 'estadisticas' | 'recursos' | 'info';
 
 function MainLayout() {
   const { agregarReporte, recargarMascotas, loading, vista, toggleVista } = useMascotas();
   const { isDarkMode, toggleTheme } = useDarkMode();
+  const { user, isAuthenticated } = useAuth();
+  
   const [activeTab, setActiveTab] = useState<TabId>('feed');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
   const handleSaveReport = async (nuevoReporte: any): Promise<boolean> => {
@@ -94,21 +102,21 @@ function MainLayout() {
         {/* Botones de acción del header */}
         <div className="flex items-center gap-2">
           
-          {/* Botón de Modo Oscuro */}
           {/* Selector de Vista (Cuadrícula / Lista) */}
           {activeTab === 'feed' && (
             <button
               onClick={toggleVista}
-              className="p-2 text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300 active:scale-95 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all cursor-pointer mr-1"
+              className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 active:scale-95 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all cursor-pointer mr-1"
               title={vista === 'grid' ? "Cambiar a vista de lista compacta" : "Cambiar a vista de cuadrícula"}
             >
               {vista === 'grid' ? <List className="w-4.5 h-4.5" /> : <LayoutGrid className="w-4.5 h-4.5" />}
             </button>
           )}
 
+          {/* Botón de Modo Oscuro */}
           <button
             onClick={toggleTheme}
-            className="p-2 text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300 active:scale-95 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all cursor-pointer mr-1"
+            className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 active:scale-95 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all cursor-pointer mr-1"
             title={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
           >
             {isDarkMode ? <Sun className="w-4.5 h-4.5 text-amber-400" /> : <Moon className="w-4.5 h-4.5" />}
@@ -118,16 +126,42 @@ function MainLayout() {
             <button 
               onClick={recargarMascotas}
               disabled={loading}
-              className="p-2 text-slate-400 dark:text-slate-555 hover:text-slate-600 dark:hover:text-slate-300 active:scale-95 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all cursor-pointer mr-1"
+              className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 active:scale-95 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all cursor-pointer mr-1"
               title="Recargar alertas"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-indigo-500' : ''}`} />
             </button>
           )}
+
+          {/* BOTÓN PERFIL / AUTENTICACIÓN */}
+          {isAuthenticated && user ? (
+            <button
+              onClick={() => setIsProfileModalOpen(true)}
+              className="flex items-center gap-2 p-1.5 pr-3 bg-indigo-50 dark:bg-slate-800/80 hover:bg-indigo-100 dark:hover:bg-slate-800 border border-indigo-200/60 dark:border-slate-700 rounded-2xl transition-all cursor-pointer active:scale-95"
+              title="Ver mi perfil"
+            >
+              <img
+                src={user.avatarUrl || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.nombre)}`}
+                alt={user.nombre}
+                className="w-7 h-7 rounded-xl object-cover border border-indigo-400/40"
+              />
+              <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 max-w-[90px] truncate hidden sm:inline">
+                {user.nombre.split(' ')[0]}
+              </span>
+            </button>
+          ) : (
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 px-3.5 py-2 rounded-2xl border border-indigo-200/80 dark:border-indigo-800/60 transition-all cursor-pointer active:scale-95"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Ingresar</span>
+            </button>
+          )}
           
           <button
             onClick={() => setIsModalOpen(true)}
-            className="hidden md:flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-2xl text-xs transition-all shadow-sm active:scale-95 shadow-indigo-600/10 cursor-pointer"
+            className="hidden md:flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-5 rounded-2xl text-xs transition-all shadow-sm active:scale-95 shadow-indigo-600/10 cursor-pointer ml-1"
           >
             <Plus className="w-4 h-4" />
             Crear Alerta
@@ -157,7 +191,7 @@ function MainLayout() {
         <button
           onClick={() => setActiveTab('feed')}
           className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-            activeTab === 'feed' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300'
+            activeTab === 'feed' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
         >
           <Home className="w-5 h-5" />
@@ -167,21 +201,11 @@ function MainLayout() {
         <button
           onClick={() => setActiveTab('mapa')}
           className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-            activeTab === 'mapa' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300'
+            activeTab === 'mapa' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
         >
           <MapPin className="w-5 h-5" />
           <span className="text-[10px] font-semibold">Mapa</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('estadisticas')}
-          className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-            activeTab === 'estadisticas' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-505 hover:text-slate-600 dark:hover:text-slate-300'
-          }`}
-        >
-          <BarChart3 className="w-5 h-5" />
-          <span className="text-[10px] font-semibold">Stats</span>
         </button>
 
         <button
@@ -193,24 +217,37 @@ function MainLayout() {
         </button>
 
         <button
-          onClick={() => setActiveTab('recursos')}
+          onClick={() => setActiveTab('estadisticas')}
           className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-            activeTab === 'recursos' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-555 hover:text-slate-600 dark:hover:text-slate-300'
+            activeTab === 'estadisticas' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
           }`}
         >
-          <HeartHandshake className="w-5 h-5" />
-          <span className="text-[10px] font-semibold">Zoonosis</span>
+          <BarChart3 className="w-5 h-5" />
+          <span className="text-[10px] font-semibold">Stats</span>
         </button>
 
-        <button
-          onClick={() => setActiveTab('info')}
-          className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
-            activeTab === 'info' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-555 hover:text-slate-600 dark:hover:text-slate-300'
-          }`}
-        >
-          <HelpCircle className="w-5 h-5" />
-          <span className="text-[10px] font-semibold">Ayuda</span>
-        </button>
+        {/* PERFIL / INICIAR SESIÓN EN NAVEGACIÓN MÓVIL */}
+        {isAuthenticated && user ? (
+          <button
+            onClick={() => setIsProfileModalOpen(true)}
+            className="flex flex-col items-center gap-1 text-indigo-600 dark:text-indigo-400 cursor-pointer"
+          >
+            <img
+              src={user.avatarUrl || `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.nombre)}`}
+              alt={user.nombre}
+              className="w-5 h-5 rounded-full object-cover border border-indigo-500"
+            />
+            <span className="text-[10px] font-semibold">Perfil</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsAuthModalOpen(true)}
+            className="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
+          >
+            <User className="w-5 h-5" />
+            <span className="text-[10px] font-semibold">Ingresar</span>
+          </button>
+        )}
       </nav>
 
       {/* Modal de Crear Reporte */}
@@ -219,15 +256,29 @@ function MainLayout() {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveReport}
       />
+
+      {/* Modal de Autenticación */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
+
+      {/* Modal de Perfil de Usuario */}
+      <UserProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+      />
     </div>
   );
 }
 
 function App() {
   return (
-    <MascotasProvider>
-      <MainLayout />
-    </MascotasProvider>
+    <AuthProvider>
+      <MascotasProvider>
+        <MainLayout />
+      </MascotasProvider>
+    </AuthProvider>
   );
 }
 
