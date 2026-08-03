@@ -12,6 +12,7 @@ export const FeedPage: React.FC = () => {
     mascotas,
     loading,
     error,
+    isRealtime,
     filtros,
     setFiltro,
     resetearFiltros,
@@ -95,9 +96,20 @@ export const FeedPage: React.FC = () => {
         {/* Cartel Informativo Comunitario */}
         <div className={feedStyles.infoBanner}>
           <Info className={feedStyles.infoIcon} />
-          <p className={feedStyles.infoText}>
-            <strong>¡Alerta Mascota Bahía Blanca!</strong> Esta es una red de vecinos solidarios. Si perdiste a tu compañero o encontraste una mascota sola en la calle, crea una alerta para que toda la comunidad colabore en su regreso a casa.
-          </p>
+          <div className="flex-grow">
+            <div className="flex items-center justify-between gap-2 mb-0.5">
+              <p className={feedStyles.infoText}>
+                <strong>¡Alerta Mascota Bahía Blanca!</strong> Red de vecinos solidarios para la búsqueda y reencuentro de mascotas en Bahía Blanca y Punta Alta.
+              </p>
+              <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0 ${
+                isRealtime 
+                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30' 
+                  : 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30'
+              }`}>
+                {isRealtime ? '🔥 Firebase Realtime en Vivo' : '💾 Persistencia Local Simulada'}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Manejo de estados de carga/error/resultados */}

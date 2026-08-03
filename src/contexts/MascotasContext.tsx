@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useMemo, useCallback } from 'react';
 import type { MascotaReportada, BarrioBahia, EstadoMascota, TipoAnimal } from '../types/mascota';
-import { mockService } from '../services/mockService';
+import { backendService } from '../services/backendService';
 
 export interface FiltrosMascotas {
   barrio: BarrioBahia | 'todos';
@@ -15,6 +15,7 @@ export interface MascotasContextType {
   loading: boolean;
   error: string | null;
   isSaving: boolean;
+  isRealtime: boolean;
   filtros: FiltrosMascotas;
   setFiltro: <K extends keyof FiltrosMascotas>(key: K, value: FiltrosMascotas[K]) => void;
   resetearFiltros: () => void;
@@ -38,6 +39,7 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isRealtime, setIsRealtime] = useState<boolean>(backendService.isRealtimeActive());
 
   const [vista, setVista] = useState<'grid' | 'list'>(() => {
     const stored = localStorage.getItem('alerta_mascota_bb_vista');
@@ -59,22 +61,39 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     busqueda: ''
   });
 
-  const cargarMascotas = useCallback(async () => {
+  // Suscripción en tiempo real a las publicaciones de la comunidad
+  useEffect(() => {
     setLoading(true);
     setError(null);
-    try {
-      const data = await mockService.getMascotas();
-      setMascotas(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido al cargar las mascotas.');
-    } finally {
-      setLoading(false);
-    }
+
+    const unsubscribe = backendService.subscribeMascotas(
+      (data) => {
+        setMascotas(data);
+        setLoading(false);
+        setIsRealtime(backendService.isRealtimeActive());
+      },
+      (err) => {
+        setError(err.message || 'Error al conectar con la base de datos.');
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    cargarMascotas();
-  }, [cargarMascotas]);
+  const cargarMascotas = useCallback(async () => {
+    // Si no hay realtime activo, recargar manualmente
+    if (!backendService.isRealtimeActive()) {
+      setLoading(true);
+      try {
+        await new Promise(resolve => setTimeout(resolve, 300));
+      } catch (e) {
+        // Handled
+      } finally {
+        setLoading(false);
+      }
+    }
+  }, []);
 
   const mascotasFiltradas = useMemo(() => {
     return mascotas.filter(mascota => {
@@ -116,8 +135,10 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setIsSaving(true);
     setError(null);
     try {
-      const mascotaCreada = await mockService.addMascota(nuevoReporte);
-      setMascotas(prev => [mascotaCreada, ...prev]);
+      const mascotaCreada = await backendService.addMascota(nuevoReporte);
+      if (!backendService.isRealtimeActive()) {
+        setMascotas(prev => [mascotaCreada, ...prev]);
+      }
       return mascotaCreada;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al guardar el nuevo reporte.');
@@ -133,6 +154,7 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     loading,
     error,
     isSaving,
+    isRealtime,
     filtros,
     setFiltro,
     resetearFiltros,
@@ -140,7 +162,7 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     recargarMascotas: cargarMascotas,
     vista,
     toggleVista
-  }), [mascotasFiltradas, mascotas, loading, error, isSaving, filtros, setFiltro, resetearFiltros, agregarReporte, cargarMascotas, vista, toggleVista]);
+  }), [mascotasFiltradas, mascotas, loading, error, isSaving, isRealtime, filtros, setFiltro, resetearFiltros, agregarReporte, cargarMascotas, vista, toggleVista]);
 
   return (
     <MascotasContext.Provider value={value}>
