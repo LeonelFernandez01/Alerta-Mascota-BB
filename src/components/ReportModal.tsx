@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { X, Dog, Cat, HelpCircle, FileText, MapPin, Phone, User, Image, PlusCircle, AlertTriangle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Dog, Cat, HelpCircle, FileText, MapPin, Phone, User, Image, PlusCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
 import type { BarrioBahia, EstadoMascota, TipoAnimal, MascotaReportada } from '../types/mascota';
+import { useAuth } from '../hooks/useAuth';
 
 interface ReportModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const BARRIOS_LIST: BarrioBahia[] = [
 ];
 
 export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSave }) => {
+  const { user, isAuthenticated } = useAuth();
   const [tipo, setTipo] = useState<TipoAnimal>('perro');
   const [estado, setEstado] = useState<EstadoMascota>('perdido');
   const [barrio, setBarrio] = useState<BarrioBahia>('Centro');
@@ -34,6 +36,17 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
   
   const [submitting, setSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  // Autocompletar datos del vecino si inició sesión al abrir el modal
+  useEffect(() => {
+    if (isOpen && isAuthenticated && user) {
+      setNombreContacto(prev => prev || user.nombre);
+      setTelefonoContacto(prev => prev || user.telefono);
+      if (user.barrio) {
+        setBarrio(user.barrio);
+      }
+    }
+  }, [isOpen, isAuthenticated, user]);
 
   if (!isOpen) return null;
 
@@ -370,33 +383,41 @@ export const ReportModal: React.FC<ReportModalProps> = ({ isOpen, onClose, onSav
           </div>
 
           {/* 6. Contacto */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide flex items-center gap-1">
-                <User className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                Nombre de Contacto
-              </label>
-              <input
-                type="text"
-                placeholder="Tu nombre"
-                value={nombreContacto}
-                onChange={(e) => setNombreContacto(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-705 dark:text-slate-200"
-              />
-            </div>
+          <div className="space-y-2">
+            {isAuthenticated && user && (
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50/70 dark:bg-indigo-950/30 px-3 py-1.5 rounded-xl border border-indigo-200/50 dark:border-indigo-800/40">
+                <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>Datos autocompletados desde tu perfil de vecino ({user.nombre})</span>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide flex items-center gap-1">
+                  <User className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                  Nombre de Contacto
+                </label>
+                <input
+                  type="text"
+                  placeholder="Tu nombre"
+                  value={nombreContacto}
+                  onChange={(e) => setNombreContacto(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-705 dark:text-slate-200"
+                />
+              </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide flex items-center gap-1">
-                <Phone className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                WhatsApp (Celular)
-              </label>
-              <input
-                type="tel"
-                placeholder="Ej: 2914567890"
-                value={telefonoContacto}
-                onChange={(e) => setTelefonoContacto(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-705 dark:text-slate-200"
-              />
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide flex items-center gap-1">
+                  <Phone className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                  WhatsApp (Celular)
+                </label>
+                <input
+                  type="tel"
+                  placeholder="Ej: 2914567890"
+                  value={telefonoContacto}
+                  onChange={(e) => setTelefonoContacto(e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-white/40 dark:bg-slate-955/40 border border-slate-200/50 dark:border-slate-800/60 rounded-2xl text-xs focus:outline-none focus:border-indigo-500/80 dark:focus:border-indigo-400/80 focus:bg-white dark:focus:bg-slate-950/80 focus:ring-4 focus:ring-indigo-500/10 dark:focus:ring-indigo-400/5 transition-all text-slate-705 dark:text-slate-200"
+                />
+              </div>
             </div>
           </div>
 
