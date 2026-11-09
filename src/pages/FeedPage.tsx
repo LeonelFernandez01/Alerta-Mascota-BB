@@ -10,6 +10,7 @@ import type { MascotaReportada } from '../types/mascota';
 export const FeedPage: React.FC = () => {
   const {
     mascotas,
+    rawMascotas,
     loading,
     error,
     isRealtime,
@@ -21,6 +22,30 @@ export const FeedPage: React.FC = () => {
   } = useMascotas();
 
   const [selectedMascota, setSelectedMascota] = useState<MascotaReportada | null>(null);
+
+  // Abrir automáticamente una alerta si viene por parámetro ?alerta=ID en la URL (ej. desde QR o link compartido)
+  useEffect(() => {
+    if (rawMascotas.length === 0) return;
+    const params = new URLSearchParams(window.location.search);
+    const alertaId = params.get('alerta');
+    if (alertaId) {
+      const encontrada = rawMascotas.find(m => m.id === alertaId);
+      if (encontrada) {
+        setSelectedMascota(encontrada);
+      }
+    }
+  }, [rawMascotas]);
+
+  const handleCloseDetail = () => {
+    setSelectedMascota(null);
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('alerta')) {
+      params.delete('alerta');
+      const newSearch = params.toString();
+      const newUrl = `${window.location.pathname}${newSearch ? `?${newSearch}` : ''}`;
+      window.history.replaceState({}, '', newUrl);
+    }
+  };
   
   // Estados para optimizar UX de Scroll y Layout
   const [limiteCarga, setLimiteCarga] = useState(4);
@@ -183,7 +208,7 @@ export const FeedPage: React.FC = () => {
       {/* Modal para Visualizar Detalles en Grande (Glassmorphism) */}
       <MascotaDetailModal
         mascota={selectedMascota}
-        onClose={() => setSelectedMascota(null)}
+        onClose={handleCloseDetail}
       />
     </>
   );

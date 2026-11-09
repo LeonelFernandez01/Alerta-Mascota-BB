@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle, Shield, Sparkles } from 'lucide-react';
+import { X, MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle, Shield, Sparkles, Share2, Check } from 'lucide-react';
 import type { MascotaReportada } from '../types/mascota';
 import { FlyerPreviewModal } from './FlyerPreviewModal';
 
@@ -10,10 +10,12 @@ interface MascotaDetailModalProps {
 
 export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota, onClose }) => {
   const [isFlyerOpen, setIsFlyerOpen] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   if (!mascota) return null;
 
   const {
+    id,
     tipo,
     estado,
     barrio,
@@ -25,6 +27,33 @@ export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota,
     telefonoContacto,
     nombreContacto,
   } = mascota;
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}${window.location.pathname}?alerta=${encodeURIComponent(id)}`;
+    const shareTitle = `Alerta Mascota BB: ${tipo.toUpperCase()} ${estado.toUpperCase()} en ${barrio}`;
+    const shareText = `${shareTitle} (${zonaEspecifica}). Contacto: ${nombreContacto}.`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl
+        });
+        return;
+      } catch {
+        // Fallback a portapapeles si el usuario cancela o falla
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    } catch {
+      // Noop
+    }
+  };
 
   // Formatear fecha amigable
   const formatearFecha = (isoString: string): string => {
@@ -183,14 +212,34 @@ export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota,
         </div>
 
         {/* Footer con Botones de Acción */}
-        <div className="p-6 border-t border-white/20 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/30 flex-shrink-0 flex flex-col sm:flex-row items-center gap-3">
-          <button
-            onClick={() => setIsFlyerOpen(true)}
-            className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-2xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98] cursor-pointer"
-          >
-            <Sparkles className="w-4 h-4 text-indigo-200" />
-            <span>Generar Cartel</span>
-          </button>
+        <div className="p-6 border-t border-white/20 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/30 flex-shrink-0 flex flex-col sm:flex-row items-center gap-2.5">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              onClick={() => setIsFlyerOpen(true)}
+              className="flex-1 sm:flex-initial bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-2xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-indigo-600/10 active:scale-[0.98] cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-indigo-200" />
+              <span>Generar Cartel</span>
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="bg-slate-200/80 dark:bg-slate-800 hover:bg-slate-300/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-3.5 px-3.5 rounded-2xl text-xs flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
+              title="Compartir enlace directo a esta alerta"
+            >
+              {copiedLink ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-500" />
+                  <span className="text-emerald-600 dark:text-emerald-400">Copiado</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-4 h-4" />
+                  <span className="sm:hidden md:inline">Compartir</span>
+                </>
+              )}
+            </button>
+          </div>
 
           <a
             href={obtenerEnlaceWhatsApp()}

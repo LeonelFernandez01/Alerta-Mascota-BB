@@ -31,8 +31,8 @@ export const generarCartelMascotaCanvas = async (mascota: MascotaReportada): Pro
   const colorPrimario = esPerdido ? '#e11d48' : '#059669';
   const colorPrimarioClaro = esPerdido ? '#fff1f2' : '#ecfdf5';
 
-  // 1. Carga asíncrona de recursos en paralelo
-  const appUrl = window.location.href;
+  // 1. Carga asíncrona de recursos en paralelo (Enlace directo a la alerta en el QR)
+  const appUrl = `${window.location.origin}${window.location.pathname}?alerta=${encodeURIComponent(mascota.id)}`;
   const [fotoMascota, qrCodeImage] = await Promise.all([
     cargarImagen(mascota.fotoUrl),
     obtenerImagenQR(appUrl)
