@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
-import { MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle } from 'lucide-react';
+import { MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle, Bookmark } from 'lucide-react';
 import type { MascotaReportada } from '../types/mascota';
+import { useMascotas } from '../hooks/useMascotas';
 
 interface MascotaCardProps {
   mascota: MascotaReportada;
@@ -9,7 +10,9 @@ interface MascotaCardProps {
 }
 
 export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vista = 'grid' }) => {
+  const { esFavorito, toggleFavorito } = useMascotas();
   const {
+    id,
     tipo,
     estado,
     barrio,
@@ -21,6 +24,8 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
     telefonoContacto,
     nombreContacto,
   } = mascota;
+
+  const guardado = esFavorito(id);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const glareRef = useRef<HTMLDivElement>(null);
@@ -168,7 +173,24 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
         </div>
 
         {/* Sección de contacto derecha */}
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-2.5 flex-shrink-0">
+          {/* Botón de Guardar en Seguimiento */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFavorito(id);
+            }}
+            className={`p-2.5 rounded-xl border transition-all cursor-pointer active:scale-95 ${
+              guardado
+                ? 'bg-amber-500/15 border-amber-500/40 text-amber-500'
+                : 'bg-slate-100/70 dark:bg-slate-800/70 border-slate-200/60 dark:border-slate-700/60 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+            }`}
+            title={guardado ? 'Quitar de guardados' : 'Guardar alerta en seguimiento'}
+          >
+            <Bookmark className={`w-4 h-4 ${guardado ? 'fill-amber-500' : ''}`} />
+          </button>
+
           {/* Perfil del reportante */}
           <div className="hidden sm:flex items-center gap-2 border-l border-slate-100 dark:border-slate-800 pl-4 mr-1">
             <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-semibold text-xs border border-slate-200 dark:border-slate-700 flex-shrink-0">
@@ -247,12 +269,27 @@ export const MascotaCard: React.FC<MascotaCardProps> = ({ mascota, onClick, vist
           )}
         </div>
 
-        {/* Badge del tipo de animal */}
-        <div className="absolute top-3 right-3 z-20">
+        {/* Badge del tipo de animal y botón de guardado */}
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-900/75 dark:bg-slate-950/85 text-white backdrop-blur-sm shadow-sm capitalize">
             {obtenerIconoAnimal()}
             {tipo}
           </span>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleFavorito(id);
+            }}
+            className={`p-1.5 rounded-full backdrop-blur-sm shadow-sm transition-all cursor-pointer active:scale-90 ${
+              guardado
+                ? 'bg-amber-500 text-white'
+                : 'bg-slate-900/75 dark:bg-slate-950/85 text-white/80 hover:text-white'
+            }`}
+            title={guardado ? 'Quitar de guardados' : 'Guardar alerta en seguimiento'}
+          >
+            <Bookmark className={`w-3.5 h-3.5 ${guardado ? 'fill-white' : ''}`} />
+          </button>
         </div>
       </div>
 

@@ -7,6 +7,7 @@ export interface FiltrosMascotas {
   estado: EstadoMascota | 'todos';
   tipo: TipoAnimal | 'todos';
   busqueda: string;
+  soloFavoritos: boolean;
 }
 
 export interface MascotasContextType {
@@ -25,6 +26,9 @@ export interface MascotasContextType {
   recargarMascotas: () => Promise<void>;
   vista: 'grid' | 'list';
   toggleVista: () => void;
+  favoritosIds: string[];
+  toggleFavorito: (id: string) => void;
+  esFavorito: (id: string) => boolean;
 }
 
 export const MascotasContext = createContext<MascotasContextType | undefined>(undefined);
@@ -60,8 +64,30 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     barrio: 'todos',
     estado: 'todos',
     tipo: 'todos',
-    busqueda: ''
+    busqueda: '',
+    soloFavoritos: false
   });
+
+  const [favoritosIds, setFavoritosIds] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('alerta_mascota_bb_favoritos');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const toggleFavorito = useCallback((id: string) => {
+    setFavoritosIds(prev => {
+      const next = prev.includes(id) ? prev.filter(favId => favId !== id) : [...prev, id];
+      localStorage.setItem('alerta_mascota_bb_favoritos', JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const esFavorito = useCallback((id: string) => {
+    return favoritosIds.includes(id);
+  }, [favoritosIds]);
 
   // Suscripción en tiempo real a las publicaciones de la comunidad
   useEffect(() => {
@@ -102,6 +128,7 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const coincideBarrio = filtros.barrio === 'todos' || mascota.barrio === filtros.barrio;
       const coincideEstado = filtros.estado === 'todos' || mascota.estado === filtros.estado;
       const coincideTipo = filtros.tipo === 'todos' || mascota.tipo === filtros.tipo;
+      const coincideFavorito = !filtros.soloFavoritos || favoritosIds.includes(mascota.id);
       
       const busquedaClean = cleanText(filtros.busqueda.trim());
       const coincideBusqueda = 
@@ -111,9 +138,9 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         (mascota.señasParticulares && cleanText(mascota.señasParticulares).includes(busquedaClean)) ||
         cleanText(mascota.nombreContacto).includes(busquedaClean);
 
-      return coincideBarrio && coincideEstado && coincideTipo && coincideBusqueda;
+      return coincideBarrio && coincideEstado && coincideTipo && coincideFavorito && coincideBusqueda;
     });
-  }, [mascotas, filtros]);
+  }, [mascotas, filtros, favoritosIds]);
 
   const setFiltro = useCallback(<K extends keyof FiltrosMascotas>(key: K, value: FiltrosMascotas[K]) => {
     setFiltros(prev => ({
@@ -127,7 +154,8 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       barrio: 'todos',
       estado: 'todos',
       tipo: 'todos',
-      busqueda: ''
+      busqueda: '',
+      soloFavoritos: false
     });
   }, []);
 
@@ -194,8 +222,11 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     eliminarMascota,
     recargarMascotas: cargarMascotas,
     vista,
-    toggleVista
-  }), [mascotasFiltradas, mascotas, loading, error, isSaving, isRealtime, filtros, setFiltro, resetearFiltros, agregarReporte, cambiarEstadoMascota, eliminarMascota, cargarMascotas, vista, toggleVista]);
+    toggleVista,
+    favoritosIds,
+    toggleFavorito,
+    esFavorito
+  }), [mascotasFiltradas, mascotas, loading, error, isSaving, isRealtime, filtros, setFiltro, resetearFiltros, agregarReporte, cambiarEstadoMascota, eliminarMascota, cargarMascotas, vista, toggleVista, favoritosIds, toggleFavorito, esFavorito]);
 
   return (
     <MascotasContext.Provider value={value}>

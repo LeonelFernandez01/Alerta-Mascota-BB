@@ -1,7 +1,8 @@
 import React from 'react';
-import { Search, X, Grid, Heart, Map } from 'lucide-react';
+import { Search, X, Grid, Heart, Map, Bookmark } from 'lucide-react';
 import type { FiltrosMascotas } from '../contexts/MascotasContext';
 import type { BarrioBahia, EstadoMascota, TipoAnimal } from '../types/mascota';
+import { useMascotas } from '../hooks/useMascotas';
 
 
 interface FilterBarProps {
@@ -28,11 +29,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   setFiltro,
   resetearFiltros
 }) => {
+  const { favoritosIds } = useMascotas();
+
   const tieneFiltrosActivos =
     filtros.barrio !== 'todos' ||
     filtros.estado !== 'todos' ||
     filtros.tipo !== 'todos' ||
-    filtros.busqueda !== '';
+    filtros.busqueda !== '' ||
+    filtros.soloFavoritos;
 
   return (
     <div className="w-full space-y-4 glass-panel rounded-3xl p-5 shadow-[0_8px_30px_rgba(99,102,241,0.02)] dark:shadow-[0_8px_32px_rgba(99,102,241,0.05)] border border-white/40 dark:border-slate-800/50 transition-all duration-300">
@@ -113,6 +117,26 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               </button>
             );
           })}
+
+          {/* Botón de filtro de Guardados / En seguimiento */}
+          <button
+            onClick={() => setFiltro('soloFavoritos', !filtros.soloFavoritos)}
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all active:scale-95 cursor-pointer border inline-flex items-center gap-1.5 ${
+              filtros.soloFavoritos
+                ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/25'
+                : 'bg-white/40 dark:bg-slate-900/40 text-slate-600 dark:text-slate-355 hover:bg-white/70 dark:hover:bg-slate-900/70 border-slate-250/30 dark:border-slate-800/40'
+            }`}
+          >
+            <Bookmark className={`w-3.5 h-3.5 ${filtros.soloFavoritos ? 'fill-white' : ''}`} />
+            <span>Guardados</span>
+            {favoritosIds.length > 0 && (
+              <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
+                filtros.soloFavoritos ? 'bg-white/25 text-white' : 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
+              }`}>
+                {favoritosIds.length}
+              </span>
+            )}
+          </button>
         </div>
       </div>
 
