@@ -1,87 +1,79 @@
 # Alerta Mascota BB 🐾
 ### Comunidad Virtual de Alertas de Mascotas en Bahía Blanca & Punta Alta
 
-Este es un **MVP (Mínimo Producto Viable)** móvil-first y totalmente responsivo desarrollado con **React, TypeScript y Tailwind CSS v4**. Está pensado para conectar de forma solidaria a vecinos que pierden o encuentran mascotas, permitiendo el contacto directo a través de WhatsApp.
+Aplicación web móvil-first y totalmente responsiva desarrollada con **React 19, TypeScript, Tailwind CSS v4, Leaflet y Firebase Firestore**. Está pensada para conectar de forma solidaria a vecinos que pierden o encuentran mascotas en Bahía Blanca y Punta Alta, permitiendo la difusión inmediata, geolocalización en mapa interactivo, generación de carteles con QR para imprimir y contacto directo por WhatsApp.
 
 ---
 
 ## 🎯 Arquitectura del Proyecto (Clean Modular Architecture)
 
-El proyecto está diseñado bajo principios de modularidad y bajo acoplamiento. La separación en componentes de presentación, servicios de acceso a datos y proveedores globales de estado hace que sea **extremadamente sencillo migrar a una base de datos real (como Firebase, Supabase o un backend propio)** sin alterar las interfaces visuales.
+El proyecto está diseñado bajo principios de modularidad y desacoplamiento, con soporte dual para **Firebase Firestore Realtime** en la nube y **fallback automático a persistencia local (`localStorage`)** para desarrollo sin configuración previa.
 
-```
+```text
 src/
+├── config/             # Inicialización y detección automática de credenciales
+│   └── firebase.ts         # Configuración de Firebase Auth y Firestore
 ├── types/              # Contratos de datos y tipados estrictos de dominio
-│   └── mascota.ts          # Tipos (BarrioBahia, TipoAnimal, MascotaReportada)
-├── services/           # Acceso a datos (Mock Services y bases locales)
+│   ├── mascota.ts          # Tipos (BarrioBahia, TipoAnimal, MascotaReportada)
+│   └── user.ts             # Tipado de Vecino Verificado y sesión
+├── services/           # Capa de acceso a datos y servicios de dominio
+│   ├── backendService.ts   # Orquestador Realtime (Firestore + Fallback local)
+│   ├── flyerGeneratorService.ts # Generador de afiches de búsqueda en HTML5 Canvas
+│   ├── geoService.ts       # Geocodificación exacta de calles con Nominatim OSM
+│   ├── statsService.ts     # Cálculo de métricas comunitarias y tasas de reencuentro
 │   ├── mockMascotas.ts     # Datos iniciales realistas de Bahía Blanca
-│   └── mockService.ts      # Simulación de llamadas de API con lag y localStorage
+│   └── mockService.ts      # Persistencia simulada en localStorage
 ├── contexts/           # Estado Global (React Context Providers)
-│   └── MascotasContext.tsx # Suministra el estado de reportes, carga y filtros
-├── hooks/              # Custom hooks reutilizables (Consumidores de contextos)
+│   ├── AuthContext.tsx     # Sesión de usuario y perfil de vecino
+│   └── MascotasContext.tsx # Estado de reportes, suscripción realtime, filtros y favoritos
+├── hooks/              # Custom hooks reutilizables
+│   ├── useAuth.ts          # Hook consumidor de autenticación
 │   ├── useMascotas.ts      # Hook consumidor del contexto de alertas
 │   └── useDarkMode.ts      # Hook para alternar y persistir el modo oscuro/claro
 ├── components/         # UI Reutilizable (Componentes de presentación)
-│   ├── MascotaCard.tsx     # Tarjeta individual (Soporta Grid y Lista)
-│   ├── FilterBar.tsx       # Buscador e inputs por scroll lateral en celular
-│   ├── ReportModal.tsx     # Formulario de reportes con subida Base64
-│   └── MascotaDetailModal.tsx # Detalle ampliado y traslúcido de mascota
+│   ├── stats/              # Gráficos modulares (BarChart, DoughnutChart, KpiCard)
+│   ├── AuthModal.tsx       # Registro e inicio de sesión de vecinos
+│   ├── FilterBar.tsx       # Buscador y filtros por tipo, estado, guardados y barrio
+│   ├── FlyerPreviewModal.tsx # Previsualización y descarga de cartel con QR
+│   ├── MascotaCard.tsx     # Tarjeta con efecto 3D Tilt, vista lista/grid y guardado
+│   ├── MascotaDetailModal.tsx # Detalle ampliado, compartir enlace y contacto WhatsApp
+│   ├── ReportModal.tsx     # Formulario de reportes con autocompletado y subida Base64
+│   └── UserProfileModal.tsx # Perfil del vecino y gestión de publicaciones propias
 ├── pages/              # Pantallas lógicas modulares
-│   ├── FeedPage.tsx        # Feed principal de alertas de mascotas
-│   ├── RecursosPage.tsx    # Listado de Zoonosis y Refugios útiles
+│   ├── FeedPage.tsx        # Feed principal de alertas y apertura por deep-link (?alerta=ID)
+│   ├── MapaPage.tsx        # Mapa interactivo Leaflet con pines personalizados por calle
+│   ├── EstadisticasPage.tsx # Dashboard de estadísticas por barrio y especie
+│   ├── RecursosPage.tsx    # Listado de Zoonosis, guardia veterinaria y refugios
 │   └── InfoPage.tsx        # Pantalla informativa de normas y uso
-├── stylePg/            # Estilos de página en TypeScript (Tailwind configs)
-│   ├── feedPage.ts         # Clases Tailwind del feed de alertas
-│   ├── recursosPage.ts     # Clases Tailwind de Zoonosis
-│   └── infoPage.ts         # Clases Tailwind de Ayuda / Info
-├── styles/             # CSS global modularizado
-│   ├── theme.css           # Soporte de Modo Oscuro Tailwind v4 y tipografías
-│   ├── animations.css      # Keyframes y transiciones de entrada
-│   └── utilities.css       # Utilidades especiales de scrollbar y degradados
-├── App.tsx             # Layout general (Tabs, Header, Providers)
-└── main.tsx            # Punto de acceso principal
+├── utils/              # Utilidades puras y helpers de Canvas / Mapas
+│   ├── canvasHelpers.ts    # Primitivas de dibujo para Canvas 2D
+│   ├── flyerDrawers.ts     # Capas de diseño del afiche descargable
+│   ├── imageLoader.ts      # Carga segura de imágenes con CORS
+│   ├── mapMarkerHelper.ts  # Generación de marcadores HTML para Leaflet
+│   └── qrGenerator.ts      # Generación de código QR con fallback vectorial offline
+├── stylePg/            # Estilos de página y componentes en TypeScript
+└── styles/             # CSS global modularizado (theme, animations, utilities)
 ```
 
 ---
 
-## ✨ Características Principales y UX/UI Optimizado
+## ✨ Características Principales
 
-1. **Modo Claro y Oscuro Nativo**:
-   - Persistente en `localStorage`.
-   - Implementado en Tailwind CSS v4 mediante `@custom-variant dark (&:where(.dark, .dark *))` para un cambio de tema impecable.
-2. **Visualización de Lista Compacta (Scrolling Inteligente)**:
-   - Para evitar la fatiga por scroll infinito en dispositivos móviles, el usuario puede alternar de vista desde el Header. La vista de lista contrae el alto de cada tarjeta a filas delgadas (~100px) en celulares. En pantallas grandes (PC), esta vista se ensancha a `max-w-4xl` mostrando un resumen de la descripción y un botón de WhatsApp con texto. La preferencia de vista se almacena de forma persistente en `localStorage`.
-3. **Carga Progresiva ("Cargar Más")**:
-   - Solo se renderizan las primeras **4 alertas** inicialmente. Un botón permite cargar 4 adicionales sucesivamente. Al realizar búsquedas o filtrar por barrio, el límite se reinicia a 4 de forma inteligente.
-4. **Botón Flotante "Volver Arriba" (Back to Top)**:
-   - Un botón circular aparece automáticamente cuando se baja más de 350px de scroll, devolviendo al usuario al principio de forma suave.
-5. **Carga Local de Archivos de Imagen**:
-   - Utiliza la **API FileReader de HTML5** para convertir fotos en URLs Base64. Esto permite subir imágenes reales desde la galería o la cámara del celular. Valida y limita archivos a un máximo de 2MB para evitar saturar el `localStorage`.
-6. **Previsualización de Imagen sin Recortes (Blurred Backdrop)**:
-   - En las vistas previas de detalles y de carga, las imágenes se renderizan de forma completa sin cortes (`object-contain`), centradas sobre un fondo estético difuminado del mismo archivo (`object-cover blur-md`). Esto garantiza que los usuarios puedan ver todas las señas particulares del animal (patas, orejas, collar, cola) sin deformaciones ni recortes arbitrarios.
-7. **Búsqueda Insensible a Acentos y Mayúsculas**:
-   - Un algoritmo normaliza caracteres unicode (ej: buscar "bahia" mostrará resultados de "Bahía").
-
----
-
-## 🚀 Plan de Escalado a Producción Real (Firebase / Supabase)
-
-El MVP está preparado para crecer. Para convertir este prototipo local en una red conectada a nivel nacional o regional con base de datos en la nube y usuarios registrados, se deben seguir estos pasos:
-
-### 1. Autenticación y Perfil de Usuario
-* **Firebase Auth / Supabase Auth**: Habilitar el inicio de sesión con correo/contraseña o Google.
-* **Flujo**: Modificar el botón "Crear Alerta" para que exija estar registrado. Al crear una alerta, el `nombreContacto` y `telefonoContacto` se obtienen del perfil del usuario registrado.
-
-### 2. Base de Datos en Tiempo Real
-* **Firestore o Supabase Tables**: Crear una colección/tabla llamada `mascotas` con el esquema definido en `src/types/mascota.ts`.
-* **Migración en Código**:
-  - En `src/contexts/MascotasContext.tsx`, reemplazar las llamadas a `mockService` por llamadas a la API de Firebase/Supabase.
-  - Como el hook `useMascotas` y los componentes consumen el mismo contexto global, **ningún archivo de la interfaz visual (UI) requerirá modificaciones**.
-
-### 3. Almacenamiento de Archivos (Storage)
-* **Firebase Storage o Supabase Buckets**:
-  - Se sube la foto binaria al Bucket.
-  - Se almacena la URL de descarga del bucket en el campo `fotoUrl` del registro en la base de datos, optimizando el consumo de espacio de datos.
+1. **Sincronización Híbrida (Firebase Firestore Realtime + Local Fallback)**:
+   - Escucha cambios en vivo mediante `onSnapshot` si las variables de entorno de Firebase están configuradas en `.env`, o funciona automáticamente en modo local (`localStorage`) sin requerir claves.
+2. **Mapa Interactivo con Geocodificación por Calle (Leaflet + Nominatim)**:
+   - Posiciona cada alerta en la calle o intersección indicada dentro de Bahía Blanca y Punta Alta, con caché local de coordenadas y marcadores diferenciados por estado.
+3. **Generador de Afiches de Búsqueda con Código QR (HTML5 Canvas)**:
+   - Crea carteles listos para imprimir o subir a historias de Instagram/WhatsApp en alta resolución, incluyendo un código QR que apunta directamente al enlace de la alerta (`/?alerta=ID`).
+4. **Perfil del Vecino y Gestión de Publicaciones Propias**:
+   - Registro rápido de vecinos con autocompletado de datos al reportar una emergencia.
+   - Panel *"Mis Publicaciones"* para cambiar el estado de una alerta a **¡Encontrado!** o eliminarla cuando la mascota regresa a casa.
+5. **Sistema de Alertas Guardadas (En Seguimiento) y Enlaces Directos**:
+   - Permite guardar casos con un marcador para hacerles seguimiento desde la barra de filtros y compartir enlaces directos mediante **Web Share API** o portapapeles.
+6. **Dashboard de Estadísticas Comunitarias**:
+   - Visualización de KPIs, distribución por especie, balance de perdidos vs. encontrados y ranking de alertas por barrio.
+7. **Experiencia Móvil-First y Modo Oscuro Nativo**:
+   - Vista intercambiable entre cuadrícula con efecto 3D Tilt y lista compacta, carga progresiva y tema claro/oscuro persistente.
 
 ---
 
@@ -91,11 +83,16 @@ El MVP está preparado para crecer. Para convertir este prototipo local en una r
    ```bash
    npm install
    ```
-2. Ejecutar el servidor de desarrollo local:
+2. *(Opcional)* Configurar Firebase Realtime copiando el archivo de ejemplo:
+   ```bash
+   cp .env.example .env
+   ```
+   *(Si no se configura `.env`, la aplicación funcionará automáticamente con persistencia local simulada).*
+3. Ejecutar el servidor de desarrollo local:
    ```bash
    npm run dev
    ```
-3. Construir la versión de producción:
+4. Construir y verificar la versión de producción:
    ```bash
    npm run build
    ```
