@@ -20,6 +20,8 @@ export interface MascotasContextType {
   setFiltro: <K extends keyof FiltrosMascotas>(key: K, value: FiltrosMascotas[K]) => void;
   resetearFiltros: () => void;
   agregarReporte: (nuevoReporte: Omit<MascotaReportada, 'id' | 'fecha'>) => Promise<MascotaReportada | null>;
+  cambiarEstadoMascota: (id: string, nuevoEstado: EstadoMascota) => Promise<boolean>;
+  eliminarMascota: (id: string) => Promise<boolean>;
   recargarMascotas: () => Promise<void>;
   vista: 'grid' | 'list';
   toggleVista: () => void;
@@ -148,6 +150,35 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, []);
 
+  const cambiarEstadoMascota = useCallback(async (
+    id: string,
+    nuevoEstado: EstadoMascota
+  ): Promise<boolean> => {
+    try {
+      await backendService.updateEstadoMascota(id, nuevoEstado);
+      if (!backendService.isRealtimeActive()) {
+        setMascotas(prev => prev.map(m => (m.id === id ? { ...m, estado: nuevoEstado } : m)));
+      }
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al actualizar el estado de la alerta.');
+      return false;
+    }
+  }, []);
+
+  const eliminarMascota = useCallback(async (id: string): Promise<boolean> => {
+    try {
+      await backendService.deleteMascota(id);
+      if (!backendService.isRealtimeActive()) {
+        setMascotas(prev => prev.filter(m => m.id !== id));
+      }
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error al eliminar la alerta.');
+      return false;
+    }
+  }, []);
+
   const value = useMemo(() => ({
     mascotas: mascotasFiltradas,
     rawMascotas: mascotas,
@@ -159,10 +190,12 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setFiltro,
     resetearFiltros,
     agregarReporte,
+    cambiarEstadoMascota,
+    eliminarMascota,
     recargarMascotas: cargarMascotas,
     vista,
     toggleVista
-  }), [mascotasFiltradas, mascotas, loading, error, isSaving, isRealtime, filtros, setFiltro, resetearFiltros, agregarReporte, cargarMascotas, vista, toggleVista]);
+  }), [mascotasFiltradas, mascotas, loading, error, isSaving, isRealtime, filtros, setFiltro, resetearFiltros, agregarReporte, cambiarEstadoMascota, eliminarMascota, cargarMascotas, vista, toggleVista]);
 
   return (
     <MascotasContext.Provider value={value}>

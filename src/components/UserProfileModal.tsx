@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Phone, MapPin, Mail, LogOut, Calendar, Edit2, Check, ShieldCheck, Heart } from 'lucide-react';
+import { X, Phone, MapPin, Mail, LogOut, Calendar, Edit2, Check, ShieldCheck, Heart, CheckCircle2, Trash2, RotateCcw } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useMascotas } from '../hooks/useMascotas';
 import type { BarrioBahia, MascotaReportada } from '../types/mascota';
@@ -26,9 +26,10 @@ const BARRIOS_DISPONIBLES: BarrioBahia[] = [
 
 export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onClose }) => {
   const { user, logout, updateUser } = useAuth();
-  const { rawMascotas } = useMascotas();
+  const { rawMascotas, cambiarEstadoMascota, eliminarMascota } = useMascotas();
   const [activeTab, setActiveTab] = useState<'perfil' | 'publicaciones'>('perfil');
   const [isEditing, setIsEditing] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   // Form de edición
   const [editNombre, setEditNombre] = useState(user?.nombre || '');
@@ -256,11 +257,67 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ isOpen, onCl
               ) : (
                 <div className={userProfileStyles.publicationsGrid}>
                   {misPublicaciones.map(mascota => (
-                    <MascotaCard 
-                      key={mascota.id} 
-                      mascota={mascota} 
-                      onClick={() => setSelectedMascota(mascota)}
-                    />
+                    <div key={mascota.id} className="flex flex-col gap-2">
+                      <MascotaCard 
+                        mascota={mascota} 
+                        onClick={() => setSelectedMascota(mascota)}
+                      />
+                      {/* Controles de gestión rápida del propietario */}
+                      <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-2xl bg-slate-100/80 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60">
+                        <button
+                          type="button"
+                          onClick={() => cambiarEstadoMascota(mascota.id, mascota.estado === 'perdido' ? 'encontrado' : 'perdido')}
+                          className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-[11px] font-bold transition-all cursor-pointer active:scale-95 ${
+                            mascota.estado === 'perdido'
+                              ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                              : 'bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30'
+                          }`}
+                        >
+                          {mascota.estado === 'perdido' ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              ¡Marcar como Encontrado!
+                            </>
+                          ) : (
+                            <>
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              Volver a Perdido
+                            </>
+                          )}
+                        </button>
+
+                        {confirmDeleteId === mascota.id ? (
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                await eliminarMascota(mascota.id);
+                                setConfirmDeleteId(null);
+                              }}
+                              className="px-2.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold cursor-pointer active:scale-95"
+                            >
+                              Confirmar
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setConfirmDeleteId(null)}
+                              className="px-2 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-semibold cursor-pointer"
+                            >
+                              No
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setConfirmDeleteId(mascota.id)}
+                            className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-800/40 transition-colors cursor-pointer active:scale-95"
+                            title="Eliminar publicación"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}

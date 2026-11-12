@@ -7,10 +7,12 @@ import {
   serverTimestamp,
   doc,
   setDoc,
-  getDoc
+  getDoc,
+  updateDoc,
+  deleteDoc
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from '../config/firebase';
-import type { MascotaReportada } from '../types/mascota';
+import type { MascotaReportada, EstadoMascota } from '../types/mascota';
 import type { Usuario } from '../types/user';
 import { mockService } from './mockService';
 
@@ -99,6 +101,31 @@ export const backendService = {
       ...nuevoReporte,
       fecha: docData.fecha
     };
+  },
+
+  // Actualizar el estado de una mascota (perdido <-> encontrado)
+  updateEstadoMascota: async (id: string, nuevoEstado: EstadoMascota): Promise<void> => {
+    if (!isFirebaseConfigured || !db) {
+      await mockService.updateEstadoMascota(id, nuevoEstado);
+      return;
+    }
+
+    const mascotaRef = doc(db, MASCOTAS_COLLECTION, id);
+    await updateDoc(mascotaRef, {
+      estado: nuevoEstado,
+      updatedAt: serverTimestamp()
+    });
+  },
+
+  // Eliminar una publicación de mascota
+  deleteMascota: async (id: string): Promise<void> => {
+    if (!isFirebaseConfigured || !db) {
+      await mockService.deleteMascota(id);
+      return;
+    }
+
+    const mascotaRef = doc(db, MASCOTAS_COLLECTION, id);
+    await deleteDoc(mascotaRef);
   },
 
   // Guardar o actualizar perfil de usuario en Firestore

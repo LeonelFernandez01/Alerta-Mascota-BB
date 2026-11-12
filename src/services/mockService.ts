@@ -1,4 +1,4 @@
-import type { MascotaReportada } from '../types/mascota';
+import type { MascotaReportada, EstadoMascota } from '../types/mascota';
 import { MOCK_MASCOTAS } from './mockMascotas';
 
 // Clave para guardar y cargar los datos de prueba en localStorage,
@@ -47,5 +47,21 @@ export const mockService = {
     const updatedData = [mascotaCreada, ...data];
     saveStoredData(updatedData);
     return mascotaCreada;
+  },
+
+  // Actualizar el estado de un reporte existente
+  async updateEstadoMascota(id: string, nuevoEstado: EstadoMascota): Promise<void> {
+    await delay(400);
+    const data = getStoredData();
+    const updatedData = data.map(m => (m.id === id ? { ...m, estado: nuevoEstado } : m));
+    saveStoredData(updatedData);
+  },
+
+  // Eliminar un reporte existente
+  async deleteMascota(id: string): Promise<void> {
+    await delay(400);
+    const data = getStoredData();
+    const updatedData = data.filter(m => m.id !== id);
+    saveStoredData(updatedData);
   }
 };
