@@ -1,12 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
-import { MapPin, Filter } from 'lucide-react';
+import { MapPin, Filter, Navigation } from 'lucide-react';
 import { useMascotas } from '../hooks/useMascotas';
-import { geocodificarDireccionMascota, BAHIA_BLANCA_CENTER } from '../services/geoService';
+import { geocodificarDireccionMascota, BAHIA_BLANCA_CENTER, BARRIO_COORDINATES } from '../services/geoService';
 import { crearIconoMascotaMapa } from '../utils/mapMarkerHelper';
 import { MascotaDetailModal } from '../components/MascotaDetailModal';
-import type { MascotaReportada, EstadoMascota } from '../types/mascota';
+import type { MascotaReportada, EstadoMascota, BarrioBahia, TipoAnimal } from '../types/mascota';
 import { mapaStyles } from '../stylePg/mapaPage';
+
+const BARRIOS_MAPA: (BarrioBahia | 'todos')[] = [
+  'todos',
+  'Centro',
+  'Universitario',
+  'Villa Mitre',
+  'Patagonia',
+  'Palihue',
+  'Noroeste',
+  'Harding Green',
+  'Grumbein',
+  'Punta Alta'
+];
 
 export const MapaPage: React.FC = () => {
   const { rawMascotas } = useMascotas();
@@ -15,12 +28,32 @@ export const MapaPage: React.FC = () => {
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
 
   const [filtroEstado, setFiltroEstado] = useState<EstadoMascota | 'todos'>('todos');
+  const [filtroBarrio, setFiltroBarrio] = useState<BarrioBahia | 'todos'>('todos');
+  const [filtroTipo, setFiltroTipo] = useState<TipoAnimal | 'todos'>('todos');
   const [mascotaSeleccionada, setMascotaSeleccionada] = useState<MascotaReportada | null>(null);
 
   const mascotasFiltradas = rawMascotas.filter((m) => {
-    if (filtroEstado === 'todos') return true;
-    return m.estado === filtroEstado;
+    const coincideEstado = filtroEstado === 'todos' || m.estado === filtroEstado;
+    const coincideBarrio = filtroBarrio === 'todos' || m.barrio === filtroBarrio;
+    const coincideTipo = filtroTipo === 'todos' || m.tipo === filtroTipo;
+    return coincideEstado && coincideBarrio && coincideTipo;
   });
+
+  // Volar suavemente hacia el barrio seleccionado
+  const handleSelectBarrio = (nuevoBarrio: BarrioBahia | 'todos') => {
+    setFiltroBarrio(nuevoBarrio);
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    if (nuevoBarrio === 'todos') {
+      map.flyTo([BAHIA_BLANCA_CENTER.lat, BAHIA_BLANCA_CENTER.lng], 13, { duration: 1.1 });
+    } else {
+      const targetCoords = BARRIO_COORDINATES[nuevoBarrio];
+      if (targetCoords) {
+        map.flyTo([targetCoords.lat, targetCoords.lng], 14, { duration: 1.1 });
+      }
+    }
+  };
 
   // Inicializar mapa de Leaflet
   useEffect(() => {
@@ -129,44 +162,76 @@ export const MapaPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Filtros rápidos de estado */}
-        <div className={mapaStyles.filterGroup}>
-          <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
-            <Filter className="w-3.5 h-3.5" />
-            Filtrar:
-          </span>
-          <button
-            onClick={() => setFiltroEstado('todos')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              filtroEstado === 'todos'
-                ? 'bg-indigo-600 text-white shadow-sm'
-                : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
-            }`}
-          >
-            Todos ({rawMascotas.length})
-          </button>
+        {/* Filtros rápidos de estado, especie y selector de barrio */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 flex-wrap">
+          <div className={mapaStyles.filterGroup}>
+            <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
+              <Filter className="w-3.5 h-3.5" />
+              Estado:
+            </span>
+            <button
+              onClick={() => setFiltroEstado('todos')}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                filtroEstado === 'todos'
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+              }`}
+            >
+              Todos ({rawMascotas.length})
+            </button>
 
-          <button
-            onClick={() => setFiltroEstado('perdido')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              filtroEstado === 'perdido'
-                ? 'bg-rose-600 text-white shadow-sm'
-                : 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 hover:bg-slate-100'
-            }`}
-          >
-            Perdidos ({rawMascotas.filter((m) => m.estado === 'perdido').length})
-          </button>
+            <button
+              onClick={() => setFiltroEstado('perdido')}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                filtroEstado === 'perdido'
+                  ? 'bg-rose-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 hover:bg-slate-100'
+              }`}
+            >
+              Perdidos ({rawMascotas.filter((m) => m.estado === 'perdido').length})
+            </button>
 
-          <button
-            onClick={() => setFiltroEstado('encontrado')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-              filtroEstado === 'encontrado'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 hover:bg-slate-100'
-            }`}
-          >
-            Encontrados ({rawMascotas.filter((m) => m.estado === 'encontrado').length})
-          </button>
+            <button
+              onClick={() => setFiltroEstado('encontrado')}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                filtroEstado === 'encontrado'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 hover:bg-slate-100'
+              }`}
+            >
+              Encontrados ({rawMascotas.filter((m) => m.estado === 'encontrado').length})
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Selector de Barrio con navegación de cámara */}
+            <div className="relative flex items-center">
+              <Navigation className="w-3.5 h-3.5 text-indigo-500 absolute left-3 pointer-events-none" />
+              <select
+                value={filtroBarrio}
+                onChange={(e) => handleSelectBarrio(e.target.value as BarrioBahia | 'todos')}
+                className="pl-8 pr-4 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              >
+                {BARRIOS_MAPA.map((b) => (
+                  <option key={b} value={b}>
+                    {b === 'todos' ? 'Ir a Barrio: Todos' : `Barrio: ${b}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Selector de Especie */}
+            <select
+              value={filtroTipo}
+              onChange={(e) => setFiltroTipo(e.target.value as TipoAnimal | 'todos')}
+              className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer capitalize"
+            >
+              <option value="todos">Especie: Todas</option>
+              <option value="perro">Solo Perros</option>
+              <option value="gato">Solo Gatos</option>
+              <option value="otro">Otros Animales</option>
+            </select>
+          </div>
         </div>
       </div>
 

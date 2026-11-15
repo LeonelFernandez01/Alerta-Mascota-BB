@@ -6,7 +6,7 @@ export interface CoordenadaGeo {
 }
 
 // Coordenadas geográficas de respaldo para el centro de cada barrio de BB y Punta Alta
-const BARRIO_COORDINATES: Record<BarrioBahia, CoordenadaGeo> = {
+export const BARRIO_COORDINATES: Record<BarrioBahia, CoordenadaGeo> = {
   Centro: { lat: -38.7183, lng: -62.2663 },
   Universitario: { lat: -38.7058, lng: -62.2536 },
   'Villa Mitre': { lat: -38.7231, lng: -62.2458 },
