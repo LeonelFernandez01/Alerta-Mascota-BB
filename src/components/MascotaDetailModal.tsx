@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { X, MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle, Shield, Sparkles, Share2, Check } from 'lucide-react';
+import { X, MapPin, Calendar, MessageCircle, CheckCircle, Dog, Cat, HelpCircle, Shield, Sparkles, Share2, Check, CheckCircle2, RotateCcw, Trash2 } from 'lucide-react';
 import type { MascotaReportada } from '../types/mascota';
 import { FlyerPreviewModal } from './FlyerPreviewModal';
+import { useAuth } from '../hooks/useAuth';
+import { useMascotas } from '../hooks/useMascotas';
 
 interface MascotaDetailModalProps {
   mascota: MascotaReportada | null;
@@ -9,10 +11,16 @@ interface MascotaDetailModalProps {
 }
 
 export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota, onClose }) => {
+  const { user, isAuthenticated } = useAuth();
+  const { rawMascotas, cambiarEstadoMascota, eliminarMascota } = useMascotas();
   const [isFlyerOpen, setIsFlyerOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   if (!mascota) return null;
+
+  // Sincronizar con la lista global por si cambió el estado en vivo mientras está abierto el modal
+  const mascotaActual = rawMascotas.find((m) => m.id === mascota.id) || mascota;
 
   const {
     id,
@@ -26,7 +34,13 @@ export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota,
     señasParticulares,
     telefonoContacto,
     nombreContacto,
-  } = mascota;
+  } = mascotaActual;
+
+  const esMiPublicacion = Boolean(
+    isAuthenticated &&
+      user &&
+      (user.telefono === telefonoContacto || user.nombre.toLowerCase() === nombreContacto.toLowerCase())
+  );
 
   const handleShare = async () => {
     const shareUrl = `${window.location.origin}${window.location.pathname}?alerta=${encodeURIComponent(id)}`;
@@ -200,15 +214,89 @@ export const MascotaDetailModal: React.FC<MascotaDetailModalProps> = ({ mascota,
           )}
 
           {/* Datos del Reportante */}
-          <div className="flex items-center gap-3.5 p-4 bg-white/70 dark:bg-slate-800/40 rounded-2xl border border-white/30 dark:border-slate-800/40 shadow-sm transition-colors">
-            <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-sm border border-slate-200 dark:border-slate-700 flex-shrink-0">
-              {nombreContacto.charAt(0).toUpperCase()}
+          <div className="flex items-center justify-between gap-3.5 p-4 bg-white/70 dark:bg-slate-800/40 rounded-2xl border border-white/30 dark:border-slate-800/40 shadow-sm transition-colors">
+            <div className="flex items-center gap-3.5">
+              <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold text-sm border border-slate-200 dark:border-slate-700 flex-shrink-0">
+                {nombreContacto.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <span className="text-slate-800 dark:text-slate-100 text-xs font-extrabold block">{nombreContacto}</span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5 font-medium">
+                  {esMiPublicacion ? 'Tu publicación activa' : 'Vecino publicador'}
+                </span>
+              </div>
             </div>
-            <div>
-              <span className="text-slate-800 dark:text-slate-100 text-xs font-extrabold block">{nombreContacto}</span>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5 font-medium">Vecino publicador</span>
-            </div>
+
+            {esMiPublicacion && (
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
+                Autor
+              </span>
+            )}
           </div>
+
+          {/* Barra de gestión directa para el autor de la alerta */}
+          {esMiPublicacion && (
+            <div className="p-3.5 rounded-2xl bg-indigo-50/50 dark:bg-slate-800/70 border border-indigo-200/50 dark:border-slate-700/70 space-y-2.5">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-700 dark:text-indigo-300 block">
+                 Administrar mi alerta
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => cambiarEstadoMascota(id, estado === 'perdido' ? 'encontrado' : 'perdido')}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer active:scale-95 ${
+                    estado === 'perdido'
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
+                      : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 border border-amber-500/30'
+                  }`}
+                >
+                  {estado === 'perdido' ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      ¡Marcar como Encontrado!
+                    </>
+                  ) : (
+                    <>
+                      <RotateCcw className="w-4 h-4" />
+                      Volver a Perdido
+                    </>
+                  )}
+                </button>
+
+                {confirmDelete ? (
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await eliminarMascota(id);
+                        setConfirmDelete(false);
+                        onClose();
+                      }}
+                      className="px-3 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold cursor-pointer active:scale-95"
+                    >
+                      Borrar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDelete(false)}
+                      className="px-2.5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold cursor-pointer"
+                    >
+                      No
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/70 text-rose-600 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/50 transition-colors cursor-pointer active:scale-95"
+                    title="Eliminar publicación"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer con Botones de Acción */}
