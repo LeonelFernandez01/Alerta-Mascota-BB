@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, RefreshCw, Sun, Moon, Home, CheckCircle2, LayoutGrid, List, BarChart3, MapPin, User, LogIn } from 'lucide-react';
+import { Plus, RefreshCw, Sun, Moon, Home, CheckCircle2, LayoutGrid, List, BarChart3, MapPin, User, LogIn, HeartHandshake } from 'lucide-react';
 import { FeedPage } from './pages/FeedPage';
 import { MapaPage } from './pages/MapaPage';
 import { EstadisticasPage } from './pages/EstadisticasPage';
@@ -224,6 +224,16 @@ function MainLayout() {
         >
           <BarChart3 className="w-5 h-5" />
           <span className="text-[10px] font-semibold">Stats</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('recursos')}
+          className={`flex flex-col items-center gap-1 transition-colors cursor-pointer ${
+            activeTab === 'recursos' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
+          }`}
+        >
+          <HeartHandshake className="w-5 h-5" />
+          <span className="text-[10px] font-semibold">Zoonosis</span>
         </button>
 
         {/* PERFIL / INICIAR SESIÓN EN NAVEGACIÓN MÓVIL */}
