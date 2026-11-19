@@ -59,7 +59,7 @@ export const FlyerPreviewModal: React.FC<FlyerPreviewModalProps> = ({
           text: `Difundir alerta de ${mascota.tipo} ${mascota.estado} en Barrio ${mascota.barrio}.`,
           files: [file],
         });
-      } catch (err) {
+      } catch {
         // Fallback simple a copiar enlace
         navigator.clipboard.writeText(window.location.href);
         setCopied(true);

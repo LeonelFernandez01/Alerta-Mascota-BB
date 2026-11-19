@@ -74,12 +74,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       // Remover password del objeto en estado
-      const { password, ...usuarioSinPass } = usuarioEncontrado;
+      const { password: _password, ...usuarioSinPass } = usuarioEncontrado;
       setUser(usuarioSinPass);
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(usuarioSinPass));
 
       return { success: true };
-    } catch (err) {
+    } catch {
       return { success: false, message: 'Error inesperado al iniciar sesión.' };
     } finally {
       setLoading(false);
@@ -116,12 +116,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       usuarios.push(nuevoUsuario);
       localStorage.setItem(USERS_DB_KEY, JSON.stringify(usuarios));
 
-      const { password, ...usuarioSinPass } = nuevoUsuario;
+      const { password: _password, ...usuarioSinPass } = nuevoUsuario;
       setUser(usuarioSinPass);
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(usuarioSinPass));
 
       return { success: true };
-    } catch (err) {
+    } catch {
       return { success: false, message: 'Error inesperado al registrar la cuenta.' };
     } finally {
       setLoading(false);

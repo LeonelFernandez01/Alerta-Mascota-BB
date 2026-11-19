@@ -115,7 +115,7 @@ export const MascotasProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setLoading(true);
       try {
         await new Promise(resolve => setTimeout(resolve, 300));
-      } catch (e) {
+      } catch {
         // Handled
       } finally {
         setLoading(false);
